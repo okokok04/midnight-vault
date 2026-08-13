@@ -1,0 +1,20 @@
+{
+  "name": "@stellarvault/contracts-midnight-escrow",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compact": "compact compile contract/src/escrow.compact contract/managed/escrow",
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@midnight-ntwrk/compact-runtime": "^0.16.0"
+  },
+  "devDependencies": {
+    "@midnight-ntwrk/midnight-js-network-id": "^4.1.1",
+    "@types/node": "^20.14.10",
+    "typescript": "^5.5.3",
+    "vitest": "^1.6.0"
+  }
+}

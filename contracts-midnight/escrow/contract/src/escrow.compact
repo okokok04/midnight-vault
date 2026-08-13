@@ -1,0 +1,137 @@
+pragma language_version 0.23;
+
+import CompactStandardLibrary;
+
+// StellarVault milestone escrow — the privacy-critical core of the
+// product. Buyer, seller, and arbiter identities are derived from
+// private secrets and only ever disclosed as opaque public-key hashes
+// (`buyer`/`seller`/`arbiter` below) — never linked to any off-chain
+// identity by the contract itself. Funds are held by the contract as
+// real unshielded NIGHT balance, not just a state flag:
+// `deposit`/`release`/`refund`/`resolve` each move actual value via the
+// standard library's unshielded-token circuits.
+
+export enum EscrowState {
+  AWAITING_DEPOSIT,
+  LOCKED,
+  RELEASED,
+  REFUNDED,
+  RESOLVED
+}
+
+// --- Public ledger state ---------------------------------------------
+// Everyone can read these. Only key *hashes* and an amount are public —
+// never a secret, never an off-chain identity.
+export sealed ledger buyer: Bytes<32>;
+export sealed ledger seller: Bytes<32>;
+export sealed ledger arbiter: Bytes<32>;
+export sealed ledger milestoneAmount: Uint<64>;
+export ledger state: EscrowState;
+
+// --- Private witness ---------------------------------------------------
+// A party's secret key never appears in a transaction or in ledger
+// state. Whoever is running a call (buyer, seller, or arbiter — each
+// running their own copy of the off-chain app with their own witness
+// implementation) answers this locally; the circuit only ever sees the
+// *derived* public key, and only discloses that hash, never the secret.
+witness localSecretKey(): Bytes<32>;
+
+constructor (_seller: Bytes<32>, _arbiter: Bytes<32>, _amount: Uint<64>) {
+  assert(_amount > 0, "Milestone amount must be greater than zero");
+
+  const buyerKey = derivePublicKey(localSecretKey());
+  assert(buyerKey != _seller, "Buyer and seller must be different parties");
+  assert(buyerKey != _arbiter, "Buyer cannot also be the arbiter");
+  assert(_seller != _arbiter, "Seller cannot also be the arbiter");
+
+  buyer = disclose(buyerKey);
+  seller = disclose(_seller);
+  arbiter = disclose(_arbiter);
+  milestoneAmount = disclose(_amount);
+  state = EscrowState.AWAITING_DEPOSIT;
+}
+
+// Buyer locks the milestone payment. Real value moves into the
+// contract's own unshielded balance here — this is the on-chain "lock"
+// step, not merely a state transition.
+export circuit deposit(): [] {
+  const pubKey = derivePublicKey(localSecretKey());
+  assert(pubKey == buyer, "Only the buyer can deposit");
+  assert(state == EscrowState.AWAITING_DEPOSIT, "Escrow already funded");
+
+  receiveUnshielded(nativeToken(), milestoneAmount as Uint<128>);
+  state = EscrowState.LOCKED;
+}
+
+// Buyer approves delivery; seller is paid in full.
+export circuit release(_sellerAddress: UserAddress): [] {
+  const pubKey = derivePublicKey(localSecretKey());
+  assert(pubKey == buyer, "Only the buyer can release");
+  assert(state == EscrowState.LOCKED, "Escrow is not in a releasable state");
+  assert(
+    unshieldedBalanceGte(nativeToken(), milestoneAmount as Uint<128>),
+    "Contract balance is lower than the milestone amount"
+  );
+
+  sendUnshielded(
+    nativeToken(),
+    milestoneAmount as Uint<128>,
+    right<ContractAddress, UserAddress>(disclose(_sellerAddress))
+  );
+  state = EscrowState.RELEASED;
+}
+
+// Buyer reclaims funds when the milestone was never delivered. Timing
+// (has a deadline passed?) is enforced by the off-chain caller today,
+// not inside the circuit — see docs/ARCHITECTURE.md for why.
+export circuit refund(_buyerAddress: UserAddress): [] {
+  const pubKey = derivePublicKey(localSecretKey());
+  assert(pubKey == buyer, "Only the buyer can request a refund");
+  assert(state == EscrowState.LOCKED, "Escrow is not in a refundable state");
+  assert(
+    unshieldedBalanceGte(nativeToken(), milestoneAmount as Uint<128>),
+    "Contract balance is lower than the milestone amount"
+  );
+
+  sendUnshielded(
+    nativeToken(),
+    milestoneAmount as Uint<128>,
+    right<ContractAddress, UserAddress>(disclose(_buyerAddress))
+  );
+  state = EscrowState.REFUNDED;
+}
+
+// Arbiter breaks a deadlock, directing funds to either side so an
+// escrow is never stuck forever.
+export circuit resolve(
+  paySeller: Boolean,
+  _sellerAddress: UserAddress,
+  _buyerAddress: UserAddress
+): [] {
+  const pubKey = derivePublicKey(localSecretKey());
+  assert(pubKey == arbiter, "Only the arbiter can resolve a dispute");
+  assert(state == EscrowState.LOCKED, "Escrow is not in a resolvable state");
+  assert(
+    unshieldedBalanceGte(nativeToken(), milestoneAmount as Uint<128>),
+    "Contract balance is lower than the milestone amount"
+  );
+
+  const payee = disclose(paySeller)
+    ? disclose(_sellerAddress)
+    : disclose(_buyerAddress);
+  sendUnshielded(nativeToken(), milestoneAmount as Uint<128>, right<ContractAddress, UserAddress>(payee));
+  state = EscrowState.RESOLVED;
+}
+
+circuit derivePublicKey(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "stellarvault:pk:"), secret]);
+}
+
+// Lets off-chain code (the escrow creator, and tests) compute a party's
+// public identifier from their secret *before* that party has signed
+// anything on-chain — e.g. the buyer needs the seller's and arbiter's
+// key hashes to fill in the constructor, without those parties needing
+// to reveal their secret to the buyer.
+export pure circuit publicKeyOf(secret: Bytes<32>): Bytes<32> {
+  return derivePublicKey(secret);
+}
