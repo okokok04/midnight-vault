@@ -14,6 +14,38 @@ milestone's payment in a Cardano smart contract that releases funds only
 under one of three signature-checked conditions — no platform, and no
 StellarVault backend, can move the money any other way.
 
+## Midnight dApp (new): privacy-preserving milestone escrow
+
+**Product idea.** Cardano's ledger is fully public, which means the
+escrow above necessarily leaks who is transacting with whom and for how
+much — information freelancers and clients often don't want visible to
+anyone watching the chain. `contracts-midnight/escrow/` re-implements
+the same buyer/seller/arbiter milestone-escrow logic on the
+[Midnight Network](https://midnight.network) in
+[Compact](https://docs.midnight.network/develop/reference/compact/):
+the public ledger only ever stores opaque public-key *hashes* and an
+amount, never a wallet address or an off-chain identity, while each
+party's real secret key stays private and is only ever proven against,
+never disclosed.
+
+**Public ledger state vs. private witness.** `buyer`, `seller`,
+`arbiter`, `milestoneAmount`, and `state` are public `ledger` fields —
+anyone can read them, but `buyer`/`seller`/`arbiter` are hashes
+produced by hashing a party's secret, disclosed deliberately via
+`disclose()`, never the secret itself. `localSecretKey(): Bytes<32>` is
+a `witness` — each party's off-chain app answers it locally with their
+own secret; the circuit only ever computes and discloses the resulting
+hash, so `deposit`/`release`/`refund`/`resolve` can enforce "only the
+buyer" / "only the arbiter" without the contract, or anyone reading the
+chain, ever learning who the buyer or arbiter actually are. Full
+walkthrough, compiler/toolchain setup (including the WSL2 note for
+Windows, since Midnight ships no native Windows build), and the test
+suite: [`contracts-midnight/escrow/README.md`](contracts-midnight/escrow/README.md).
+
+This is a separate, new component alongside the Cardano MVP described
+below — it does not yet replace the backend/frontend, which still run
+against Cardano.
+
 ## Live Preprod deployment
 
 | | |
