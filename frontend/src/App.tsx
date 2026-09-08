@@ -35,12 +35,17 @@ export function App() {
   return (
     <>
       <header className="app-header">
-        <div>
-          <h1>StellarVault</h1>
-          <p>
-            Trustless milestone escrow for freelance work on Cardano Preprod &
-            privacy-preserving Compact ZK DApp on Midnight Network.
-          </p>
+        <div className="brand-wrapper">
+          <div className="brand-logo" aria-hidden="true">
+            {activeTab === "midnight" ? "🌌" : "🛡️"}
+          </div>
+          <div>
+            <h1>StellarVault</h1>
+            <p>
+              Trustless milestone escrow for freelance work on Cardano Preprod &
+              privacy-preserving Compact ZK DApp on Midnight Network.
+            </p>
+          </div>
         </div>
         {activeTab === "cardano" && <WalletConnect wallet={wallet} />}
       </header>
@@ -51,55 +56,72 @@ export function App() {
           className={`nav-tab-button ${activeTab === "midnight" ? "active" : ""}`}
           onClick={() => setActiveTab("midnight")}
         >
-          🌌 Midnight Privacy Escrow (Compact ZK)
+          <span>🌌</span> Midnight Privacy Escrow (Compact ZK)
         </button>
         <button
           className={`nav-tab-button ${activeTab === "cardano" ? "active" : ""}`}
           onClick={() => setActiveTab("cardano")}
         >
-          🔵 Cardano Preprod Escrow (Aiken)
+          <span>🔵</span> Cardano Preprod Escrow (Aiken)
         </button>
       </nav>
 
-      {activeTab === "midnight" ? (
-        <MidnightEscrowPanel />
-      ) : (
-        <>
-          <StatsBar stats={stats} loading={statsLoading} />
+      <main>
+        {activeTab === "midnight" ? (
+          <MidnightEscrowPanel />
+        ) : (
+          <>
+            <StatsBar stats={stats} loading={statsLoading} />
 
-          {error && <div className="error-banner" role="alert">{error}</div>}
+            {error && <div className="error-banner" role="alert">{error}</div>}
 
-          <EscrowForm
-            onCreate={createEscrow}
-            defaultBuyerAddress={wallet.address ?? undefined}
-          />
-
-          <section style={{ marginTop: "2rem" }}>
-            <h2 className="section-title">Escrows</h2>
-            <EscrowList
-              escrows={escrows}
-              loading={loading}
-              onRelease={releaseEscrow}
-              onRefund={refundEscrow}
-              onResolve={resolveEscrow}
+            <EscrowForm
+              onCreate={createEscrow}
+              defaultBuyerAddress={wallet.address ?? undefined}
             />
-          </section>
 
-          <section style={{ marginTop: "2rem" }}>
-            <FeedbackForm onSubmit={submitFeedback} />
-          </section>
+            <section style={{ marginTop: "2.5rem" }}>
+              <h2 className="section-title">
+                <span>📋</span> Active Milestone Escrows
+              </h2>
+              <EscrowList
+                escrows={escrows}
+                loading={loading}
+                onRelease={releaseEscrow}
+                onRefund={refundEscrow}
+                onResolve={resolveEscrow}
+              />
+            </section>
 
-          <section style={{ marginTop: "2rem" }}>
-            <h2 className="section-title">Recent feedback</h2>
-            <FeedbackList
-              feedback={feedback}
-              loading={feedbackLoading}
-              onUpdateStatus={updateStatus}
-              onRemove={removeFeedback}
-            />
-          </section>
-        </>
-      )}
+            <section style={{ marginTop: "2.5rem" }}>
+              <FeedbackForm onSubmit={submitFeedback} />
+            </section>
+
+            <section style={{ marginTop: "2.5rem" }}>
+              <h2 className="section-title">
+                <span>💬</span> Recent Community Feedback
+              </h2>
+              <FeedbackList
+                feedback={feedback}
+                loading={feedbackLoading}
+                onUpdateStatus={updateStatus}
+                onRemove={removeFeedback}
+              />
+            </section>
+          </>
+        )}
+      </main>
+
+      <footer style={{ marginTop: "4rem", paddingTop: "1.5rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", color: "var(--text-muted)", fontSize: "0.82rem" }}>
+        <div>
+          StellarVault Protocol © 2026 — Built with <a href="https://midnight.network" target="_blank" rel="noreferrer">Midnight Compact</a> & <a href="https://aiken-lang.org" target="_blank" rel="noreferrer">Aiken</a>
+        </div>
+        <div style={{ display: "flex", gap: "1.2rem" }}>
+          <a href="https://github.com/okokok04/stellarvault" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://x.com/manh71546" target="_blank" rel="noreferrer">X (Twitter)</a>
+          <a href="https://indexer.preprod.midnight.network" target="_blank" rel="noreferrer">Midnight Indexer</a>
+        </div>
+      </footer>
     </>
   );
 }

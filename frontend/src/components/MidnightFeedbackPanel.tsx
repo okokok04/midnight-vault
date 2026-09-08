@@ -47,7 +47,7 @@ export function MidnightFeedbackPanel() {
         lastNullifier: nullifierHash,
       }));
 
-      const logEntry = `[${new Date().toLocaleTimeString()}] ✅ submitRating(${rating}, ${category}) -> ZK Proof verified. Nullifier ${nullifierHash.slice(0, 16)}... registered on-chain. Participant identity kept 100% confidential.`;
+      const logEntry = `[${new Date().toLocaleTimeString()}] ✅ circuit submitRating(${rating}★, ${category}) -> ZK Proof verified. Nullifier ${nullifierHash.slice(0, 16)}... registered on-chain. Participant secret retained in client memory.`;
       setZkLogs((prev) => [logEntry, ...prev]);
 
       setSuccessMsg(`Anonymous feedback (${rating} ⭐, ${category}) submitted successfully with Zero-Knowledge verification!`);
@@ -65,23 +65,23 @@ export function MidnightFeedbackPanel() {
     : '0.0';
 
   return (
-    <div className="card" style={{ marginTop: '1.25rem' }} data-testid="midnight-feedback-panel">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+    <div className="card" style={{ marginTop: '1.5rem' }} data-testid="midnight-feedback-panel">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
-          <h3 style={{ margin: 0, fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h3 style={{ margin: 0, fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span>🗳️</span> Anonymous Feedback & Survey Protocol (Compact ZK)
           </h3>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-            Submit verifiable ratings and reputation feedback with selective disclosure — your identity is never linked on-chain.
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            Submit verifiable ratings with selective disclosure — your off-chain identity is never linked on-chain.
           </p>
         </div>
-        <span className="badge badge-midnight">Midnight ZK Survey</span>
+        <span className="badge badge-midnight">1-Person-1-Vote (Nullifiers)</span>
       </div>
 
       {/* Aggregate Verified Tallies */}
-      <div className="stats-bar" style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+      <div className="stats-bar" style={{ marginTop: '1.25rem', marginBottom: '1.25rem' }}>
         <div className="stats-tile">
-          <div className="stats-tile-value" style={{ color: 'var(--warning)' }}>
+          <div className="stats-tile-value" style={{ color: 'var(--warning)', background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             {averageRating} ⭐
           </div>
           <div className="stats-tile-label">Average Community Score</div>
@@ -94,12 +94,12 @@ export function MidnightFeedbackPanel() {
 
         <div className="stats-tile">
           <div className="stats-tile-value">{feedbackStats.totalRatingSum}</div>
-          <div className="stats-tile-label">Total Points Tally</div>
+          <div className="stats-tile-label">Total Rating Points Tally</div>
         </div>
       </div>
 
       {/* Submission Form */}
-      <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
+      <form onSubmit={handleSubmit} style={{ marginTop: '1.25rem' }}>
         <div className="form-grid">
           <div>
             <label htmlFor="feedback-rating">Rating (1 to 5 Stars)</label>
@@ -107,15 +107,6 @@ export function MidnightFeedbackPanel() {
               id="feedback-rating"
               value={rating}
               onChange={(e) => setRating(Number(e.target.value))}
-              style={{
-                width: '100%',
-                background: 'var(--surface-alt)',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                padding: '0.5rem',
-                color: 'var(--text)',
-                font: 'inherit',
-              }}
             >
               <option value={5}>⭐⭐⭐⭐⭐ (5 - Exceptional)</option>
               <option value={4}>⭐⭐⭐⭐ (4 - Very Good)</option>
@@ -131,15 +122,6 @@ export function MidnightFeedbackPanel() {
               id="feedback-category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              style={{
-                width: '100%',
-                background: 'var(--surface-alt)',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                padding: '0.5rem',
-                color: 'var(--text)',
-                font: 'inherit',
-              }}
             >
               <option value="WORK_QUALITY">Work Quality</option>
               <option value="COMMUNICATION">Communication</option>
@@ -151,20 +133,20 @@ export function MidnightFeedbackPanel() {
 
           <div className="field-full">
             <label htmlFor="feedback-secret">
-              <code>participantSecret(): Bytes&lt;32&gt;</code> (Private Witness - Never Sent to Network)
+              <code>participantSecret(): Bytes&lt;32&gt;</code> (Private Witness - Retained in Browser Memory)
             </label>
-            <div style={{ display: 'flex', gap: '0.4rem' }}>
+            <div style={{ display: 'flex', gap: '0.45rem' }}>
               <input
                 id="feedback-secret"
                 type="password"
                 value={participantSecret}
                 onChange={(e) => setParticipantSecret(e.target.value)}
-                style={{ fontSize: '0.8rem', fontFamily: 'monospace' }}
+                style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }}
               />
               <button
                 type="button"
                 onClick={handleRegenerateSecret}
-                style={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+                style={{ fontSize: '0.8rem', whiteSpace: 'nowrap', padding: '0.45rem 0.8rem' }}
               >
                 🔄 Fresh Secret
               </button>
@@ -173,18 +155,19 @@ export function MidnightFeedbackPanel() {
         </div>
 
         {successMsg && (
-          <div style={{ background: 'rgba(53, 201, 143, 0.15)', border: '1px solid var(--success)', color: 'var(--success)', padding: '0.6rem 0.8rem', borderRadius: '8px', fontSize: '0.85rem', marginBottom: '0.8rem' }}>
+          <div style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--success)', color: '#34d399', padding: '0.75rem 1rem', borderRadius: '8px', fontSize: '0.88rem', marginBottom: '1rem', backdropFilter: 'blur(10px)' }}>
             {successMsg}
           </div>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <button type="submit" disabled={submitting} className="primary">
-            {submitting ? 'Generating ZK Proof...' : 'Submit Anonymous Feedback (ZK Circuit)'}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <button type="submit" disabled={submitting} className="primary" style={{ padding: '0.65rem 1.25rem' }}>
+            {submitting ? 'Computing ZK Proof...' : 'Submit Anonymous Feedback (ZK Circuit)'}
           </button>
 
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Topic Hash: <code className="hash">{feedbackStats.surveyTopic.slice(0, 16)}...</code>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span>Topic Hash:</span>
+            <code className="hash">{feedbackStats.surveyTopic.slice(0, 16)}...</code>
             <CopyButton value={feedbackStats.surveyTopic} />
           </div>
         </div>
@@ -192,11 +175,11 @@ export function MidnightFeedbackPanel() {
 
       {/* Proof Logs */}
       {zkLogs.length > 0 && (
-        <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border)' }}>
-          <h5 style={{ margin: '0 0 0.4rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Zero-Knowledge Execution Logs</h5>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+        <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+          <h5 style={{ margin: '0 0 0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Zero-Knowledge Execution Logs</h5>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             {zkLogs.map((log, i) => (
-              <div key={i} style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--text-muted)' }}>
+              <div key={i} style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', background: 'var(--surface-alt)', padding: '0.45rem 0.75rem', borderRadius: '6px' }}>
                 {log}
               </div>
             ))}

@@ -47,10 +47,10 @@ describe('MidnightLaceConnect', () => {
     };
 
     render(<MidnightLaceConnect wallet={wallet} />);
-    expect(screen.getByText('mn_unshielded1234567890')).toBeInTheDocument();
-    expect(screen.getByText('Disconnect Lace')).toBeInTheDocument();
+    expect(screen.getByText(/mn_unshielded/i)).toBeInTheDocument();
+    expect(screen.getByText('Disconnect')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('Disconnect Lace'));
+    fireEvent.click(screen.getByText('Disconnect'));
     expect(disconnectMock).toHaveBeenCalledTimes(1);
   });
 });
@@ -73,8 +73,8 @@ describe('MidnightPrivacyInspector', () => {
     );
 
     expect(screen.getByText('Observable Privacy Behavior Inspector')).toBeInTheDocument();
-    expect(screen.getByText(/Private Witness/i)).toBeInTheDocument();
-    expect(screen.getByText(/Public Ledger State/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Private Witness/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Public Ledger State/i).length).toBeGreaterThan(0);
     expect(screen.getByText('0x9988776655443322110099887766554433221100998877665544332211009988')).toBeInTheDocument();
   });
 });
