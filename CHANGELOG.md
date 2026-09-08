@@ -4,7 +4,15 @@ Keeping this in sync with the product is itself part of the Level 5
 requirement ("keeping docs in sync with a changing product") — update
 it in the same commit/PR as the change it describes, not after.
 
-## Unreleased / Level 6 — Supermoon
+## Level 7 / Midnight ZK Privacy DApps Release
+
+- **Midnight Compact Milestone Escrow**: Implemented in Compact (`0.23`) with ZK circuits (`deposit`, `release`, `refund`, `resolve`), deliberate `disclose()`, and `localSecretKey()` private witness.
+- **Anonymous Feedback & Survey Protocol**: Implemented `feedback.compact` with cryptographic nullifier `computeNullifier()` and aggregate metrics.
+- **Frontend Lace Wallet & ZK Privacy Inspector**: Dedicated Midnight panel on dashboard with Lace connector (native + simulator mode) and visual observable privacy inspector.
+- **Dual Live Deployments**: Production live on Vercel (`frontend-eight-alpha-39.vercel.app`) and GitHub Pages (`okokok04.github.io/stellarvault`).
+- **Test Suite**: 7/7 escrow tests passed, 5/5 feedback tests passed, 26/26 frontend tests passed.
+
+## Level 6 — Supermoon
 
 **Verified end-to-end in production**, not just locally: deadline
 presets, the stats bar, escrow/feedback filter buttons, and feedback
