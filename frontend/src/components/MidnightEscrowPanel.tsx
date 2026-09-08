@@ -3,7 +3,6 @@ import { useMidnightContract } from '../hooks/useMidnightContract';
 import { MidnightLaceConnect } from './MidnightLaceConnect';
 import { MidnightPrivacyInspector } from './MidnightPrivacyInspector';
 import { CopyButton } from './CopyButton';
-import { MidnightFeedbackPanel } from './MidnightFeedbackPanel';
 import { PREPROD_DEPLOYED_CONTRACT } from '../lib/midnight-crypto';
 
 export function MidnightEscrowPanel() {
@@ -138,8 +137,6 @@ export function MidnightEscrowPanel() {
         </div>
       </div>
 
-      {/* 5. Anonymous Feedback & Survey Protocol Component */}
-      <MidnightFeedbackPanel />
     </div>
   );
 }
