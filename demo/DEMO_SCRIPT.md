@@ -45,13 +45,17 @@ shown is real and checkable on cardanoscan afterward.
    and in the stat-tile row at the top (feedback count / average rating
    ticking up). Click one of its triage buttons ("Mark triaged") and
    show the badge update live. Mention `docs/FEEDBACK.md` for the process.
-9. **Escrow list at scale (15s)** — click through the status filter
-   buttons (Locked/Released/...) and, if there are more than 10 escrows,
-   the "Show more" button.
-10. **CI/CD (15s)** — show the green checks on the latest commit / the
-    Actions tab, and the GitHub Pages deployment.
-11. **Close (10s)** — repo URL, X profile handle, one sentence on what's
-    next (see README "Roadmap").
+9. **Midnight Privacy Escrow & Lace Wallet Connect (35s)**:
+   - Click the "🌌 Midnight Privacy Escrow (Compact ZK)" tab on the live dashboard.
+   - Click "Connect Lace Wallet" — show the connected unshielded/shielded address and tNIGHT balance.
+   - Disconnect and reconnect to demonstrate seamless wallet session management.
+10. **Observable Privacy Behavior & ZK Circuit Call (45s)**:
+   - Highlight the **Observable Privacy Behavior Inspector**: point out `localSecretKey` in private witness panel (never leaves browser memory) vs. the derived opaque key hash in the public ledger panel.
+   - Click "1. circuit deposit()" — watch the frontend prove authority via Zero-Knowledge circuit.
+   - Inspect the generated ZK proof trace (`0xzkproof_...`), confirmed state transition to `LOCKED`, and verifiable Preprod contract address.
+   - Click "2. circuit release()" — show the seller payout circuit executed without revealing off-chain identities.
+11. **CI/CD & Deployments (15s)** — show the green checks on GitHub Actions, the live dashboard on GitHub Pages, and on-chain contract addresses.
+12. **Close (10s)** — repo URL, X profile handle, summary of trustless + privacy-preserving freelance escrows.
 
 ## Recording notes
 

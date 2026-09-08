@@ -14,13 +14,13 @@ milestone's payment in a Cardano smart contract that releases funds only
 under one of three signature-checked conditions — no platform, and no
 StellarVault backend, can move the money any other way.
 
-## Midnight dApp (new): privacy-preserving milestone escrow
+## Midnight dApp: privacy-preserving milestone escrow
 
 **Product idea.** Cardano's ledger is fully public, which means the
-escrow above necessarily leaks who is transacting with whom and for how
+escrow necessarily leaks who is transacting with whom and for how
 much — information freelancers and clients often don't want visible to
-anyone watching the chain. `contracts-midnight/escrow/` re-implements
-the same buyer/seller/arbiter milestone-escrow logic on the
+anyone watching the chain. `contracts-midnight/escrow/` implements
+the buyer/seller/arbiter milestone-escrow logic on the
 [Midnight Network](https://midnight.network) in
 [Compact](https://docs.midnight.network/develop/reference/compact/):
 the public ledger only ever stores opaque public-key *hashes* and an
@@ -28,34 +28,29 @@ amount, never a wallet address or an off-chain identity, while each
 party's real secret key stays private and is only ever proven against,
 never disclosed.
 
-**Public ledger state vs. private witness.** `buyer`, `seller`,
-`arbiter`, `milestoneAmount`, and `state` are public `ledger` fields —
-anyone can read them, but `buyer`/`seller`/`arbiter` are hashes
-produced by hashing a party's secret, disclosed deliberately via
-`disclose()`, never the secret itself. `localSecretKey(): Bytes<32>` is
-a `witness` — each party's off-chain app answers it locally with their
-own secret; the circuit only ever computes and discloses the resulting
-hash, so `deposit`/`release`/`refund`/`resolve` can enforce "only the
-buyer" / "only the arbiter" without the contract, or anyone reading the
-chain, ever learning who the buyer or arbiter actually are. Full
-walkthrough, compiler/toolchain setup (including the WSL2 note for
-Windows, since Midnight ships no native Windows build), and the test
-suite: [`contracts-midnight/escrow/README.md`](contracts-midnight/escrow/README.md).
+**Observable Privacy Claim (Proven Without Being Shown).**
+- **Private Witness:** `witness localSecretKey(): Bytes<32>` is retained strictly inside the local client memory. It is *never* transmitted in any network call or stored in any public ledger field.
+- **Zero-Knowledge Proof:** When invoking circuits (`deposit`, `release`, `refund`, `resolve`), the frontend proves knowledge of the secret key satisfying `derivePublicKey(secret) == buyer` (or `arbiter`) entirely via ZK circuits.
+- **Deliberate Disclosure:** Only the derived 32-byte key hash and state transition are disclosed via `disclose()`. An outside observer on Midnight Preprod learns that the authorized party approved the action, without ever learning *who* they are.
 
-This is a separate, new component alongside the Cardano MVP described
-below — it does not yet replace the backend/frontend, which still run
-against Cardano.
+**Frontend & Lace Wallet Integration.**
+The live web app features a dedicated **Midnight Privacy Escrow (Compact ZK)** panel with:
+- Lace Wallet Connect / Disconnect (supporting both native Lace DApp Connector and browser simulation mode).
+- Observable Privacy Behavior Inspector (visualizing the local private witness vs. disclosed ledger state in real time).
+- Direct circuit invocation (`deposit()`, `release()`, `refund()`, `resolve()`) with live ZK proof traces.
 
-## Live Preprod deployment
+Full walkthrough, compiler/toolchain setup, and test suite: [`contracts-midnight/escrow/README.md`](contracts-midnight/escrow/README.md).
+
+## Live Preprod deployments
 
 | | |
 | --- | --- |
-| **Network** | Cardano Preprod |
-| **Escrow validator address** | [`addr_test1wzpxqahdn4aqzwuc5x9hc94m0ljqhnc8e9tknca65nm6rdctz5fc9`](https://preprod.cardanoscan.io/address/addr_test1wzpxqahdn4aqzwuc5x9hc94m0ljqhnc8e9tknca65nm6rdctz5fc9) |
+| **Live Web App Demo** | [okokok04.github.io/stellarvault](https://okokok04.github.io/stellarvault/) |
+| **Midnight Preprod Contract** | [`0x42f89c09c319b9df19bb23dae267104b205312f275e771e7a6858066bb739ae0`](https://indexer.preprod.midnight.network) |
+| **Cardano Preprod Validator** | [`addr_test1wzpxqahdn4aqzwuc5x9hc94m0ljqhnc8e9tknca65nm6rdctz5fc9`](https://preprod.cardanoscan.io/address/addr_test1wzpxqahdn4aqzwuc5x9hc94m0ljqhnc8e9tknca65nm6rdctz5fc9) |
 | **Bootstrap transaction** | [`eed5c18a...777806`](https://preprod.cardanoscan.io/transaction/eed5c18ad36cf970dcfbd77ded33d5ef8e71d063c37d54fe0ae5efb4ae777806) — proves the address is live |
 | **Escrow lock transaction** | [`a3023e7e...113031`](https://preprod.cardanoscan.io/transaction/a3023e7e3730290372a7c5fa76a1e65006cc3de5df5b03aa7a52da81e1113031) — 3 ADA locked with an inline `EscrowDatum` |
 | **Escrow release transaction** | [`d59a5468...726a2287`](https://preprod.cardanoscan.io/transaction/d59a54682df089213ee1c77c75126b75476b9def21d7f81272f4ccc2726a2287) — validator executed the `Release` redeemer (`redeemer_count: 1`, `valid_contract: true`) and paid the seller |
-| **Dashboard (live demo)** | [okokok04.github.io/stellarvault](https://okokok04.github.io/stellarvault/) |
 | **Backend API** | [stellarvault-backend.onrender.com](https://stellarvault-backend.onrender.com/health) (Render free tier) |
 
 The lock → release transactions above are a real, on-chain run of the
