@@ -14,32 +14,37 @@ milestone's payment in a Cardano smart contract that releases funds only
 under one of three signature-checked conditions — no platform, and no
 StellarVault backend, can move the money any other way.
 
-## Midnight dApp: privacy-preserving milestone escrow
+## Midnight dApps: Privacy-Preserving Escrow & Anonymous Feedback
 
-**Product idea.** Cardano's ledger is fully public, which means the
-escrow necessarily leaks who is transacting with whom and for how
-much — information freelancers and clients often don't want visible to
-anyone watching the chain. `contracts-midnight/escrow/` implements
-the buyer/seller/arbiter milestone-escrow logic on the
-[Midnight Network](https://midnight.network) in
-[Compact](https://docs.midnight.network/develop/reference/compact/):
-the public ledger only ever stores opaque public-key *hashes* and an
-amount, never a wallet address or an off-chain identity, while each
-party's real secret key stays private and is only ever proven against,
-never disclosed.
+### 1. Privacy-Preserving Milestone Escrow
+Cardano's ledger is fully public, leaking counterparties and amounts. `contracts-midnight/escrow/` implements milestone-escrow logic in [Compact](https://docs.midnight.network/develop/reference/compact/): public state stores only opaque public-key hashes and amounts, while private witness `localSecretKey()` stays on the client.
 
-**Observable Privacy Claim (Proven Without Being Shown).**
-- **Private Witness:** `witness localSecretKey(): Bytes<32>` is retained strictly inside the local client memory. It is *never* transmitted in any network call or stored in any public ledger field.
-- **Zero-Knowledge Proof:** When invoking circuits (`deposit`, `release`, `refund`, `resolve`), the frontend proves knowledge of the secret key satisfying `derivePublicKey(secret) == buyer` (or `arbiter`) entirely via ZK circuits.
-- **Deliberate Disclosure:** Only the derived 32-byte key hash and state transition are disclosed via `disclose()`. An outside observer on Midnight Preprod learns that the authorized party approved the action, without ever learning *who* they are.
+### 2. Anonymous Feedback & Survey Protocol (Product Proposal)
+From the provided idea list (*Anonymous Feedback / Survey — verifiable participation, private responses*), `contracts-midnight/feedback/` introduces a confidential reputation protocol:
+- **Verifiable Participation:** Participants prove knowledge of a private secret token via ZK circuit without revealing their wallet address.
+- **Cryptographic Nullifiers:** Deterministic nullifiers prevent double-voting/spamming while completely concealing voter identity.
+- Full design document: [`docs/PRODUCT_PROPOSAL.md`](docs/PRODUCT_PROPOSAL.md).
 
-**Frontend & Lace Wallet Integration.**
+### 3. Privacy Model: What an Observer CAN and CANNOT Learn
+
+| Property | Visibility | Technical Guarantee |
+| :--- | :---: | :--- |
+| **Contract State & Tallies** | 🌐 **CAN LEARN** | Public ledger state (`totalResponses`, `totalRatingSum`, `state`, `milestoneAmount`) |
+| **ZK Nullifier Hashes** | 🌐 **CAN LEARN** | `lastNullifier: Bytes<32>` (proves 1-person-1-vote without revealing who) |
+| **Deliberate Key Hashes** | 🌐 **CAN LEARN** | Derived 32-byte hashes disclosed deliberately via `disclose()` |
+| **Off-chain Identity / Address** | 🔒 **CANNOT LEARN** | Never broadcasted, attached to transactions, or written on-chain |
+| **Private Witness Keys** | 🔒 **CANNOT LEARN** | Kept strictly in client memory (`localSecretKey`, `participantSecret`) |
+| **Deal & Review Linkage** | 🔒 **CANNOT LEARN** | Zero-knowledge proof decouples reputation submissions from specific counterparties |
+
+### 4. Frontend & Lace Wallet Integration
 The live web app features a dedicated **Midnight Privacy Escrow (Compact ZK)** panel with:
-- Lace Wallet Connect / Disconnect (supporting both native Lace DApp Connector and browser simulation mode).
-- Observable Privacy Behavior Inspector (visualizing the local private witness vs. disclosed ledger state in real time).
-- Direct circuit invocation (`deposit()`, `release()`, `refund()`, `resolve()`) with live ZK proof traces.
+- **Lace Wallet Connect / Disconnect:** native Lace DApp Connector and simulated testnet mode.
+- **Observable Privacy Behavior Inspector:** live side-by-side inspection of private witness vs. disclosed public outputs.
+- **Circuit Invocations:** execute `deposit()`, `release()`, `refund()`, `resolve()`, and `submitRating()`.
 
-Full walkthrough, compiler/toolchain setup, and test suite: [`contracts-midnight/escrow/README.md`](contracts-midnight/escrow/README.md).
+Walkthrough and test suites:
+- Escrow: [`contracts-midnight/escrow/README.md`](contracts-midnight/escrow/README.md)
+- Anonymous Feedback: [`contracts-midnight/feedback/README.md`](contracts-midnight/feedback/README.md)
 
 ## Live Preprod deployments
 
