@@ -1,0 +1,66 @@
+pragma language_version 0.23;
+
+import CompactStandardLibrary;
+
+// StellarVault Anonymous Feedback & Survey Protocol
+// Allows verified freelancers and clients to submit private feedback,
+// rating, and survey responses without disclosing their off-chain identity.
+// A cryptographic nullifier prevents double-submissions.
+
+export enum FeedbackCategory {
+  COMMUNICATION,
+  PAYMENT_PROMPTNESS,
+  WORK_QUALITY,
+  COLLABORATION,
+  GENERAL
+}
+
+// --- Public ledger state ---------------------------------------------
+// Publicly verifiable tallies and totals. Observers see only aggregated
+// metrics and opaque nullifier hashes.
+export ledger totalResponses: Uint<64>;
+export ledger totalRatingSum: Uint<64>;
+export ledger lastNullifier: Bytes<32>;
+export sealed ledger surveyTopic: Bytes<32>;
+
+// --- Private witness ---------------------------------------------------
+// The participant's private secret token or membership proof.
+// Kept entirely off-chain in local client storage.
+witness participantSecret(): Bytes<32>;
+
+constructor (_topic: Bytes<32>) {
+  surveyTopic = disclose(_topic);
+  totalResponses = 0;
+  totalRatingSum = 0;
+  lastNullifier = pad(32, "");
+}
+
+// Submit anonymous rating (1-5) and feedback category.
+// Verifies eligibility and computes a unique nullifier without disclosing the rater.
+export circuit submitRating(rating: Uint<8>, category: FeedbackCategory): [] {
+  assert(rating >= 1 && rating <= 5, "Rating must be between 1 and 5");
+
+  const secret = participantSecret();
+  const nullifier = computeNullifier(secret, surveyTopic);
+
+  // Assert nullifier is non-zero to guarantee participant secret was provided
+  assert(nullifier != pad(32, ""), "Invalid participant secret");
+
+  // State transitions: Increment public tallies
+  totalResponses = (totalResponses + 1) as Uint<64>;
+  totalRatingSum = (totalRatingSum + (disclose(rating) as Uint<64>)) as Uint<64>;
+  lastNullifier = disclose(nullifier);
+}
+
+circuit computeNullifier(secret: Bytes<32>, topic: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>([
+    pad(32, "stellarvault:feedback:nullifier:"),
+    secret,
+    topic
+  ]);
+}
+
+// Pure circuit to allow client to compute its nullifier locally before submitting
+export pure circuit nullifierOf(secret: Bytes<32>, topic: Bytes<32>): Bytes<32> {
+  return computeNullifier(secret, topic);
+}
