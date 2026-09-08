@@ -7,39 +7,33 @@ plan for "building in public."
 
 ## Profile
 
-- **Name**: StellarVault (or "StellarVault — builder: Mạnh")
+- **Name**: StellarVault | Trustless & Privacy-Preserving Escrow
 - **Bio** (≤160 chars):
-  > Trustless milestone escrow for freelance work, on Cardano. MVP live
-  > on Preprod. Building in public. ⛓️
-- **Link**: https://github.com/okokok04/stellarvault (or the live dashboard URL once hosted)
-- **Location**: (optional, your choice)
-- **Header image**: a simple screenshot of the dashboard's "New milestone
-  escrow" form, or a plain graphic with the tagline.
+  > Trustless milestone escrow on Cardano & Zero-Knowledge privacy dApps on Midnight Network. Building in public. ⛓️🌌
+- **Link**: https://okokok04.github.io/stellarvault (GitHub: okokok04/stellarvault)
+- **Header image**: screenshot of the StellarVault dashboard with the Midnight Privacy Inspector.
 
-## Pinned post (once the repo + deploy are live)
+## Pinned post (live on X)
 
-> StellarVault: milestone escrow for freelancers, enforced by a Cardano
-> smart contract instead of a platform's word.
+> 🚀 Introducing StellarVault: Trustless milestone escrow + Zero-Knowledge Privacy on Cardano & Midnight Network.
 >
-> MVP is live on Preprod today:
-> - Aiken validator: buyer/seller/arbiter, no other way to move funds
-> - Full source + docs + CI: <repo URL>
-> - Live demo: <dashboard URL>
+> 🔒 Why Midnight? Public chains leak deal amounts & counterparties. With Compact ZK smart contracts:
+> • Private witnesses remain in local memory
+> • Selective disclosure via ZK proofs
+> • Anonymous reputation & surveys with nullifiers
 >
-> 🧵 how it works ↓
+> 🌐 Live Demo: https://okokok04.github.io/stellarvault/
+> 📦 GitHub: https://github.com/okokok04/stellarvault
+>
+> 🧵 Build-in-public thread ↓
 
-## Suggested build-in-public thread (3–5 posts)
+## Build-in-public thread (5 posts)
 
-1. The problem: why freelance escrow needs a trustless middle layer, in
-   plain language (no jargon).
-2. The core guarantee: paste the `Release` / `Refund` / `Resolve` rule
-   summary from `docs/ARCHITECTURE.md`, framed as "here's the whole
-   trust model in three lines."
-3. What's live right now: link the repo, the CI badge, and the deployed
-   validator address — invite people to check it on cardanoscan.
-4. The demo video.
-5. What's next (from the README's "Roadmap" section) — signals this is
-   an ongoing build, not a one-off drop.
+1. **The Problem**: Freelancers and remote clients struggle with trust. Public blockchains fix custody, but leak sensitive financial relationships and deal sizes to the world.
+2. **Cardano Core**: Smart contracts enforce strict 3-way multisig conditions (`Release` / `Refund` / `Resolve`) on Cardano Preprod.
+3. **Midnight Zero-Knowledge Layer**: Built with Midnight's Compact language — buyer/seller identities are proven with ZK circuits (`deposit`, `release`, `refund`, `resolve`) without ever disclosing secret keys or wallet addresses.
+4. **Anonymous Survey & Feedback**: Our new ZK survey protocol lets users submit reviews with cryptographic nullifiers, stopping spam without exposing who rated whom.
+5. **Try it live**: Test the live dApp on GitHub Pages with Lace wallet connector or simulator mode!
 
 ## Ongoing cadence
 

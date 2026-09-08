@@ -23,6 +23,22 @@ Each action is a single on-chain transaction; the resulting tx hash is
 shown on the escrow card and can be looked up on
 [preprod.cardanoscan.io](https://preprod.cardanoscan.io).
 
+## Via the Midnight Privacy dApp
+
+1. On the live dashboard, switch to the **🌌 Midnight Privacy Escrow (Compact ZK)** tab.
+2. Click **Connect Lace Wallet** (supports native Midnight Lace browser extension or testnet simulator).
+3. **Observable Privacy Behavior Inspector:**
+   - Manage your local private secret witness `localSecretKey(): Bytes<32>` (retained in browser memory).
+   - View your derived opaque public-key hash disclosed on the public ledger.
+4. **Execute Compact ZK Circuits:**
+   - Click `1. circuit deposit()` to lock funds into the Preprod smart contract.
+   - Click `2. circuit release()` or `3. circuit refund()` or `4. circuit resolve(paySeller)` to settle.
+   - Live ZK proof traces will display the generated proof hash and on-chain verification confirmation.
+5. **Submit Anonymous Survey & Feedback:**
+   - Scroll down to the **Anonymous Feedback & Survey Protocol** panel.
+   - Select rating (1-5 ⭐) and category (Work Quality, Communication, etc.).
+   - Click **Submit Anonymous Feedback (ZK Circuit)** — a zero-knowledge nullifier is generated and recorded on-chain, proving valid participation without exposing your identity.
+
 ## Via the REST API directly
 
 Base URL defaults to `http://localhost:4000`.
