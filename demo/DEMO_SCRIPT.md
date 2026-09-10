@@ -59,5 +59,6 @@ shown is real and checkable on cardanoscan afterward.
 
 ## Recorded Video Demo
 
-- **Google Drive Link:** [Watch Recorded Demo Video](https://drive.google.com/file/d/1NvIjqROaMdxUUOhqM1Si_rv3quN5dsKL/view?usp=sharing)
+- **Google Drive Link:** [Watch Recorded Demo Video](https://drive.google.com/file/d/1dfl-PEse7T6iJ8OFS7otk2VUeMl7WlJV/view?usp=sharing)
 - **Content:** Demonstrates Lace Wallet connect, observable privacy behavior, client witness, and successful ZK circuit execution (`deposit` and `release`).
+

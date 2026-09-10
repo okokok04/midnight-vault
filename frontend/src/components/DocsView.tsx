@@ -26,20 +26,31 @@ export function DocsView() {
               Complete reference guide for the multi-chain Zero-Knowledge milestone escrow &amp; confidential reputation protocol.
             </p>
           </div>
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+            <a
+              href="https://drive.google.com/file/d/1dfl-PEse7T6iJ8OFS7otk2VUeMl7WlJV/view?usp=sharing"
+              target="_blank"
+              rel="noreferrer"
+              className="primary"
+              style={{ padding: "0.55rem 1rem", fontSize: "0.82rem", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+            >
+              <span>🎬 Watch Demo Video</span>
+              <ExternalLinkIcon width="13" height="13" />
+            </a>
             <a
               href="https://github.com/okokok04/stellarvault"
               target="_blank"
               rel="noreferrer"
-              className="primary"
-              style={{ padding: "0.55rem 1rem", fontSize: "0.82rem" }}
+              className="secondary-btn"
+              style={{ padding: "0.55rem 1rem", fontSize: "0.82rem", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
             >
-              <span>GitHub Repository</span>
+              <span>GitHub Repo</span>
               <ExternalLinkIcon width="13" height="13" />
             </a>
           </div>
         </div>
       </div>
+
 
       <div className="docs-layout" style={{ marginTop: "1.5rem" }}>
         {/* Docs Navigation Sidebar */}

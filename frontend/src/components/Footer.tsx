@@ -76,6 +76,12 @@ export function Footer({ setActiveTab }: Props) {
               </button>
             </li>
             <li>
+              <a href="https://drive.google.com/file/d/1dfl-PEse7T6iJ8OFS7otk2VUeMl7WlJV/view?usp=sharing" target="_blank" rel="noreferrer" className="footer-nav-link">
+                <span>🎬 Demo Walkthrough Video</span>
+                <ExternalLinkIcon width="12" height="12" />
+              </a>
+            </li>
+            <li>
               <a href="https://github.com/okokok04/stellarvault" target="_blank" rel="noreferrer" className="footer-nav-link">
                 <span>GitHub Repository</span>
                 <ExternalLinkIcon width="12" height="12" />
@@ -89,6 +95,7 @@ export function Footer({ setActiveTab }: Props) {
             </li>
           </ul>
         </div>
+
 
         {/* Column 4: Explorers & Networks */}
         <div className="footer-col">
