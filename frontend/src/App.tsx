@@ -5,16 +5,21 @@ import { FeedbackForm } from "./components/FeedbackForm";
 import { FeedbackList } from "./components/FeedbackList";
 import { StatsBar } from "./components/StatsBar";
 import { Navbar } from "./components/Navbar";
+import { HeroBanner } from "./components/HeroBanner";
 import { MidnightEscrowPanel } from "./components/MidnightEscrowPanel";
 import { MidnightFeedbackPanel } from "./components/MidnightFeedbackPanel";
 import { ProtocolAnalytics } from "./components/ProtocolAnalytics";
+import { DocsView } from "./components/DocsView";
+import { AboutView } from "./components/AboutView";
+import { Footer } from "./components/Footer";
+import { SparklesIcon, VoteIcon, ShieldIcon, BarChartIcon, LayersIcon } from "./components/Icons";
 import { useEscrows } from "./hooks/useEscrows";
 import { useFeedback } from "./hooks/useFeedback";
 import { useStats } from "./hooks/useStats";
 import { useWallet } from "./hooks/useWallet";
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<"midnight" | "survey" | "cardano" | "analytics">("midnight");
+  const [activeTab, setActiveTab] = useState<"midnight" | "survey" | "cardano" | "analytics" | "docs" | "about">("midnight");
   const wallet = useWallet();
   const {
     escrows,
@@ -38,34 +43,59 @@ export function App() {
     <>
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} wallet={wallet} />
 
-      {/* Luxury Web3 Tab Navigation */}
+      {/* Master Hero Banner (shown on main interactive tabs) */}
+      {(activeTab === "midnight" || activeTab === "cardano") && (
+        <HeroBanner activeTab={activeTab} setActiveTab={setActiveTab} />
+      )}
+
+      {/* Segmented Master Navigation Tabs */}
       <nav className="nav-tabs" aria-label="Network DApp Tabs">
         <button
           className={`nav-tab-button ${activeTab === "midnight" ? "active" : ""}`}
           onClick={() => setActiveTab("midnight")}
         >
-          <span>🌌</span> Midnight Privacy Escrow (Compact ZK)
+          <SparklesIcon width="16" height="16" />
+          <span>Midnight Privacy Escrow (Compact ZK)</span>
         </button>
 
         <button
           className={`nav-tab-button ${activeTab === "survey" ? "active" : ""}`}
           onClick={() => setActiveTab("survey")}
         >
-          <span>🗳️</span> Anonymous ZK Survey
+          <VoteIcon width="16" height="16" />
+          <span>Anonymous ZK Survey</span>
         </button>
 
         <button
           className={`nav-tab-button ${activeTab === "cardano" ? "active" : ""}`}
           onClick={() => setActiveTab("cardano")}
         >
-          <span>🔵</span> Cardano Preprod Escrow (Aiken)
+          <ShieldIcon width="16" height="16" />
+          <span>Cardano Preprod Escrow (Aiken)</span>
         </button>
 
         <button
           className={`nav-tab-button ${activeTab === "analytics" ? "active" : ""}`}
           onClick={() => setActiveTab("analytics")}
         >
-          <span>📊</span> Protocol Analytics & Activity
+          <BarChartIcon width="16" height="16" />
+          <span>Protocol Analytics</span>
+        </button>
+
+        <button
+          className={`nav-tab-button ${activeTab === "docs" ? "active" : ""}`}
+          onClick={() => setActiveTab("docs")}
+        >
+          <LayersIcon width="16" height="16" />
+          <span>Docs &amp; Specs</span>
+        </button>
+
+        <button
+          className={`nav-tab-button ${activeTab === "about" ? "active" : ""}`}
+          onClick={() => setActiveTab("about")}
+        >
+          <ShieldIcon width="16" height="16" />
+          <span>About &amp; Security</span>
         </button>
       </nav>
 
@@ -85,6 +115,10 @@ export function App() {
           />
         )}
 
+        {activeTab === "docs" && <DocsView />}
+
+        {activeTab === "about" && <AboutView />}
+
         {activeTab === "cardano" && (
           <>
             <StatsBar stats={stats} loading={statsLoading} />
@@ -98,7 +132,8 @@ export function App() {
 
             <section style={{ marginTop: "2.5rem" }}>
               <h2 className="section-title">
-                <span>📋</span> Active Milestone Escrows
+                <ShieldIcon width="20" height="20" />
+                <span>Active Milestone Escrows</span>
               </h2>
               <EscrowList
                 escrows={escrows}
@@ -115,7 +150,7 @@ export function App() {
 
             <section style={{ marginTop: "2.5rem" }}>
               <h2 className="section-title">
-                <span>💬</span> Recent Feedback
+                <span>Recent Feedback</span>
               </h2>
               <FeedbackList
                 feedback={feedback}
@@ -128,18 +163,7 @@ export function App() {
         )}
       </main>
 
-      <footer style={{ marginTop: "4.5rem", paddingTop: "1.75rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1.25rem", color: "var(--text-muted)", fontSize: "0.85rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <span>🛡️</span>
-          <span>StellarVault Protocol © 2026 — Multi-chain Zero-Knowledge & Multisig Milestone Escrow</span>
-        </div>
-        <div style={{ display: "flex", gap: "1.25rem", alignItems: "center" }}>
-          <a href="https://github.com/okokok04/stellarvault" target="_blank" rel="noreferrer">GitHub</a>
-          <a href="https://x.com/manh71546" target="_blank" rel="noreferrer">X (Twitter)</a>
-          <a href="https://indexer.preprod.midnight.network" target="_blank" rel="noreferrer">Midnight Explorer</a>
-          <a href="https://preprod.cardanoscan.io" target="_blank" rel="noreferrer">Cardanoscan</a>
-        </div>
-      </footer>
+      <Footer setActiveTab={setActiveTab} />
     </>
   );
 }

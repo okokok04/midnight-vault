@@ -1,4 +1,5 @@
 import { FeedbackList } from "./FeedbackList";
+import { ActivityIcon } from "./Icons";
 import type { FeedbackRecord, FeedbackStatus } from "../types/feedback";
 import type { PlatformStats } from "../types/stats";
 
@@ -51,8 +52,8 @@ export function ProtocolAnalytics({
             {loading
               ? "…"
               : stats?.averageRating
-                ? `${stats.averageRating.toFixed(1)} ⭐`
-                : "5.0 ⭐"}
+                ? `${stats.averageRating.toFixed(1)} ★`
+                : "5.0 ★"}
           </div>
           <div className="stats-tile-label">Average Trust Rating</div>
         </div>
@@ -63,7 +64,8 @@ export function ProtocolAnalytics({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
           <div>
             <h3 style={{ margin: 0, fontSize: "1.1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span>⚡</span> Real-time On-Chain Activity Stream
+              <ActivityIcon width="18" height="18" />
+              <span>Real-time On-Chain Activity Stream</span>
             </h3>
             <p style={{ margin: "0.25rem 0 0", fontSize: "0.82rem", color: "var(--text-muted)" }}>
               Live transaction submissions and Zero-Knowledge proofs verified on Preprod networks.
@@ -101,18 +103,18 @@ export function ProtocolAnalytics({
         </div>
       </div>
 
-      {/* 3. Community Feedback & Triage Moderation */}
-      <section style={{ marginTop: "2rem" }}>
-        <h2 className="section-title">
-          <span>💬</span> Community Feedback & Triage
-        </h2>
+      {/* 3. Community Feedback Management */}
+      <div className="card" style={{ marginTop: "1.5rem" }}>
+        <h3 style={{ margin: "0 0 1rem", fontSize: "1.1rem" }}>
+          Community Submissions & Triage Pipeline
+        </h3>
         <FeedbackList
           feedback={feedback}
           loading={feedbackLoading}
           onUpdateStatus={onUpdateStatus}
           onRemove={onRemove}
         />
-      </section>
+      </div>
     </div>
   );
 }

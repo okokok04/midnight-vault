@@ -44,11 +44,11 @@ export function EscrowCard({
   }
 
   return (
-    <div className="card">
+    <div className="card escrow-card">
       <div className="escrow-row">
-        <div>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <StatusBadge status={escrow.status} />{" "}
-          <strong>{formatAda(escrow.milestoneAmountLovelace)}</strong>
+          <strong style={{ fontSize: "1.1rem", fontFeatureSettings: '"tnum"' }}>{formatAda(escrow.milestoneAmountLovelace)}</strong>
         </div>
         {isLocked && (
           <div className="actions">
@@ -87,31 +87,31 @@ export function EscrowCard({
         )}
       </div>
 
-      <div className="escrow-meta">
-        <span>buyer {shorten(escrow.buyerAddress)}</span>
-        <span>seller {shorten(escrow.sellerAddress)}</span>
-        <span>arbiter {shorten(escrow.arbiterAddress)}</span>
-        <span>deadline {new Date(escrow.deadlineUnixMs).toLocaleString()}</span>
+      <div className="escrow-meta" style={{ marginTop: "0.85rem" }}>
+        <span><strong>Buyer:</strong> {shorten(escrow.buyerAddress)}</span>
+        <span><strong>Seller:</strong> {shorten(escrow.sellerAddress)}</span>
+        <span><strong>Arbiter:</strong> {shorten(escrow.arbiterAddress)}</span>
+        <span><strong>Deadline:</strong> {new Date(escrow.deadlineUnixMs).toLocaleString()}</span>
       </div>
-      <div className="escrow-meta">
-        <span>
-          script <code className="hash">{shorten(escrow.scriptAddress)}</code>{" "}
+      <div className="escrow-meta" style={{ marginTop: "0.45rem" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+          <strong>Script:</strong> <code className="hash">{shorten(escrow.scriptAddress)}</code>{" "}
           <CopyButton value={escrow.scriptAddress} />
         </span>
-        <span>
-          lock tx <code className="hash">{shorten(escrow.lockTxHash)}</code>{" "}
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+          <strong>Lock Tx:</strong> <code className="hash">{shorten(escrow.lockTxHash)}</code>{" "}
           <CopyButton value={escrow.lockTxHash} />
         </span>
         {escrow.settleTxHash && (
-          <span>
-            settle tx{" "}
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+            <strong>Settle Tx:</strong>{" "}
             <code className="hash">{shorten(escrow.settleTxHash)}</code>{" "}
             <CopyButton value={escrow.settleTxHash} />
           </span>
         )}
       </div>
 
-      {error && <div className="error-banner" role="alert">{error}</div>}
+      {error && <div className="error-banner" role="alert" style={{ marginTop: "0.85rem", marginBottom: 0 }}>{error}</div>}
     </div>
   );
 }

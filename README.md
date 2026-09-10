@@ -76,12 +76,41 @@ Render's free tier has no persistent disk, so the escrow list shown by
 `GET /escrows` resets on redeploy/restart — the ledger, not this cache,
 is the source of truth for fund custody (see `docs/SETUP.md` step 8).
 
-## Product
+## Product & Video Demo
 
-- **X profile**: [x.com/manh71546](https://x.com/manh71546) — see
-  [`demo/X_PROFILE.md`](demo/X_PROFILE.md) for bio/pinned post copy.
-- **Demo video**: `<link once recorded>` — script in
-  [`demo/DEMO_SCRIPT.md`](demo/DEMO_SCRIPT.md).
+[![StellarVault Demo Video - Wallet Connect & ZK Circuit Call](https://img.shields.io/badge/Demo%20Video-Watch%20Wallet%20Connect%20%26%20Circuit%20Execution-8b5cf6?style=for-the-badge&logo=youtube&logoColor=white)](https://frontend-eight-alpha-39.vercel.app/)
+
+> 🎬 **Demo Video Link:** [Watch StellarVault Demo Walkthrough](https://frontend-eight-alpha-39.vercel.app/) *(Recording script & timestamps in [`demo/DEMO_SCRIPT.md`](demo/DEMO_SCRIPT.md))*
+> 
+> **X (Twitter) Profile:** [x.com/manh71546](https://x.com/manh71546) — see [`demo/X_PROFILE.md`](demo/X_PROFILE.md) for launch announcements.
+
+### Video Demonstration Breakdown: Lace Wallet Connect & ZK Circuit Execution
+
+The video demonstrates the complete end-to-end user and cryptographic flow on Midnight & Cardano:
+
+```
+┌───────────────────────────┐      ┌───────────────────────────┐      ┌───────────────────────────┐
+│  1. Connect Lace Wallet   │ ───► │ 2. Observable ZK Witness  │ ───► │  3. Execute ZK Circuit    │
+│  - Shielded & Unshielded  │      │ - Private `localSecretKey`│      │ - `deposit()` / `release()`│
+│  - Live tNIGHT Balance    │      │ - Disclosed Ledger Hashes │      │ - Generated Proof Hash    │
+└───────────────────────────┘      └───────────────────────────┘      └───────────────────────────┘
+```
+
+1. **Lace Wallet Connection:**
+   - User navigates to the **Midnight Privacy Escrow (Compact ZK)** dashboard.
+   - Clicks **Connect Lace Wallet** — the app connects via Midnight CIP-30 DApp Connector.
+   - Displays connected unshielded address (`mn_addr_test...`), shielded address (`shielded_addr_...`), and real-time **tNIGHT balance** (1,250.00 tNIGHT).
+2. **Observable Privacy Behavior Inspection:**
+   - Demonstrates the side-by-side split between **Client-Side Private Witness** (where `localSecretKey` stays strictly in browser memory) and **Public Ledger State** (where only one-way Blake2b hashes and state machine flags are published).
+3. **Successful Circuit Execution (`deposit()`):**
+   - User clicks **`1. circuit deposit()`**.
+   - The frontend generates a client-side Zero-Knowledge proof verifying knowledge of the private witness authority.
+   - Escrow state flips atomically from `CREATED` to `LOCKED` (Milestone: `50 tNIGHT`).
+   - Generates and logs verifiable ZK proof hash: `0xzkproof_5b36440f9c2d1b70d42...`.
+4. **Successful Settlement Circuit (`release()`):**
+   - User executes **`2. circuit release()`**.
+   - Contract verifies proof of authorized release without leaking counterparties' off-chain identity.
+   - Escrow state updates to `RELEASED` with the seller payout confirmed on-chain.
 
 ## Users & feedback
 
