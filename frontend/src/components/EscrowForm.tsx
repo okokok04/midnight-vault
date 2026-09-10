@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import type { CreateEscrowInput } from "../types/escrow";
+import { LockIcon, SparklesIcon, ShieldIcon } from "./Icons";
 
 interface FormState {
   buyerAddress: string;
@@ -24,11 +25,41 @@ const DEADLINE_PRESETS = [
   { label: "+14 days", days: 14 },
 ];
 
-/// `datetime-local` inputs are the biggest source of mobile confusion in
-/// this form (per real feedback) — native pickers vary wildly across
-/// mobile browsers/OSes and are fiddly to tap precisely. Quick-select
-/// presets cover the common case without touching the picker at all;
-/// it stays available for anyone who wants an exact time.
+const MILESTONE_TEMPLATES = [
+  {
+    title: "Fullstack DApp MVP",
+    ada: "250",
+    days: 14,
+    buyer: "addr_test1qrx86...buyer",
+    seller: "addr_test1qpk92...dev",
+    arbiter: "addr_test1qzn44...arbiter",
+  },
+  {
+    title: "Smart Contract Audit",
+    ada: "500",
+    days: 7,
+    buyer: "addr_test1qrx86...buyer",
+    seller: "addr_test1q99k2...auditor",
+    arbiter: "addr_test1qzn44...arbiter",
+  },
+  {
+    title: "ZK-SNARK Integration",
+    ada: "350",
+    days: 7,
+    buyer: "addr_test1qrx86...buyer",
+    seller: "addr_test1q77a1...zkdev",
+    arbiter: "addr_test1qzn44...arbiter",
+  },
+  {
+    title: "UI/UX Master Redesign",
+    ada: "150",
+    days: 3,
+    buyer: "addr_test1qrx86...buyer",
+    seller: "addr_test1q88m3...designer",
+    arbiter: "addr_test1qzn44...arbiter",
+  },
+];
+
 function toDatetimeLocalValue(date: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
   return (
@@ -54,6 +85,23 @@ export function EscrowForm({
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
+
+  function applyTemplate(tmpl: typeof MILESTONE_TEMPLATES[0]) {
+    const futureDate = new Date(Date.now() + tmpl.days * 86_400_000);
+    setForm({
+      buyerAddress: defaultBuyerAddress || tmpl.buyer,
+      sellerAddress: tmpl.seller,
+      arbiterAddress: tmpl.arbiter,
+      milestoneAmountAda: tmpl.ada,
+      deadline: toDatetimeLocalValue(futureDate),
+    });
+    setError(null);
+  }
+
+  const adaNum = Number(form.milestoneAmountAda) || 0;
+  const estimatedTxFee = 0.174;
+  const minUtxoStorage = 2.0;
+  const totalAdaRequired = adaNum > 0 ? (adaNum + minUtxoStorage + estimatedTxFee).toFixed(3) : "0.000";
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -93,8 +141,41 @@ export function EscrowForm({
   }
 
   return (
-    <form className="card" onSubmit={handleSubmit}>
-      <h2 className="section-title">New milestone escrow</h2>
+    <form className="card escrow-form-card" onSubmit={handleSubmit}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.75rem" }}>
+        <div>
+          <h2 className="section-title" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.55rem" }}>
+            <LockIcon width="20" height="20" />
+            <span>New milestone escrow</span>
+          </h2>
+          <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "var(--text-muted)" }}>
+            Lock native ADA into an Aiken Plutus V3 contract with cryptographic non-custodial dispute resolution.
+          </p>
+        </div>
+        <span className="badge badge-locked">Plutus V3 Preprod</span>
+      </div>
+
+      {/* Quick Template Presets */}
+      <div style={{ marginBottom: "1.25rem" }}>
+        <div style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-dim)", marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+          <SparklesIcon width="13" height="13" />
+          <span>Quick Milestone Presets</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "0.5rem" }}>
+          {MILESTONE_TEMPLATES.map((tmpl) => (
+            <button
+              key={tmpl.title}
+              type="button"
+              className="preset-chip-btn"
+              onClick={() => applyTemplate(tmpl)}
+              title={`Auto-fill ${tmpl.title} with ${tmpl.ada} ADA and +${tmpl.days}d deadline`}
+            >
+              <div style={{ fontWeight: 600, fontSize: "0.82rem", color: "var(--text)" }}>{tmpl.title}</div>
+              <div style={{ fontSize: "0.74rem", color: "var(--accent-purple)", fontVariantNumeric: "tabular-nums" }}>{tmpl.ada} ADA • {tmpl.days}d</div>
+            </button>
+          ))}
+        </div>
+      </div>
 
       {error && <div className="error-banner" role="alert">{error}</div>}
 
@@ -167,9 +248,37 @@ export function EscrowForm({
         </div>
       </div>
 
-      <button className="primary" type="submit" disabled={submitting}>
+      {/* Live Financial Breakdown Bar */}
+      {adaNum > 0 && (
+        <div className="escrow-cost-breakdown">
+          <div className="cost-row">
+            <span className="cost-label">Milestone Locked Value:</span>
+            <span className="cost-value">{adaNum.toLocaleString()} ADA</span>
+          </div>
+          <div className="cost-row">
+            <span className="cost-label">Cardano Plutus V3 Script Storage Reserve:</span>
+            <span className="cost-value">{minUtxoStorage.toFixed(1)} ADA</span>
+          </div>
+          <div className="cost-row">
+            <span className="cost-label">Estimated Preprod Network Gas Fee:</span>
+            <span className="cost-value">~{estimatedTxFee} ADA</span>
+          </div>
+          <div className="cost-row total-row">
+            <span className="cost-label">Total Buyer UTxO Obligation:</span>
+            <span className="cost-value highlight">{totalAdaRequired} ADA</span>
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "1.25rem", padding: "0.65rem 0.85rem", background: "var(--surface-alt)", borderRadius: "8px", border: "1px solid var(--border)", fontSize: "0.78rem", color: "var(--text-muted)" }}>
+        <ShieldIcon width="16" height="16" color="var(--accent-purple)" />
+        <span>Non-custodial invariant: Funds can ONLY be disbursed by buyer signoff, arbiter decision, or post-deadline refund.</span>
+      </div>
+
+      <button className="primary" type="submit" disabled={submitting} style={{ marginTop: "1.25rem", width: "100%", padding: "0.85rem" }}>
         {submitting ? "Locking funds…" : "Lock funds in escrow"}
       </button>
     </form>
   );
 }
+

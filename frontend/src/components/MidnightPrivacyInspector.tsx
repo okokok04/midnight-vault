@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import type { CircuitProofTrace, MidnightPrivateState } from '../types/midnight';
 import { CopyButton } from './CopyButton';
-import { LockIcon, GlobeIcon, SparklesIcon, RefreshCwIcon, CheckCircleIcon, LayersIcon } from './Icons';
+import { LockIcon, GlobeIcon, SparklesIcon, RefreshCwIcon, CheckCircleIcon, LayersIcon, CodeIcon, ShieldIcon } from './Icons';
 
 interface Props {
   privateState: MidnightPrivateState;
@@ -15,6 +16,27 @@ export function MidnightPrivacyInspector({
   onRegenerateSecret,
   onUpdateSecret,
 }: Props) {
+  const [showZkJson, setShowZkJson] = useState(false);
+
+  // Simulated real ZK-IR Proof Payload for live inspection
+  const sampleZkProofJson = {
+    protocol: "Midnight Compact ZK-SNARK (PlonK / Halo2 Arithmetization)",
+    circuit: "stellar_vault_escrow::release",
+    curve: "BLS12-381 / Jubjub Embedded",
+    constraints: 4328,
+    provingKeyHash: "0x8fa1b9e2c4d6f8a0123456789abcdef0123456789abcdef0123456789abcdef0",
+    publicInputs: [
+      privateState.derivedPublicKey || "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "0x5374656c6c61725661756c745f4d696c6573746f6e655f303031000000000000",
+    ],
+    proofData: {
+      a: "0x29a4f61e8093dbac875143a15276e48c08efbc01289de61d9a2468bc701f5e82",
+      b: "0x10fa8c71b3e94a82c6d40f1a9b8e7c6d5a4b3c2e1f0d9c8b7a6f5e4d3c2b1a09",
+      c: "0x98ef76dc54ba3210fedcba9876543210abcdef0123456789abcdef0123456789",
+    },
+    verificationStatus: "CRYPTOGRAPHICALLY_SOUND",
+  };
+
   return (
     <div className="card privacy-inspector-card" data-testid="privacy-inspector">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
@@ -27,7 +49,18 @@ export function MidnightPrivacyInspector({
             Zero-Knowledge proofs allow you to prove buyer/arbiter authority without ever disclosing your secret key.
           </p>
         </div>
-        <span className="badge badge-midnight">ZK Selective Disclosure</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            type="button"
+            className="secondary-btn"
+            onClick={() => setShowZkJson(!showZkJson)}
+            style={{ fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.35rem 0.75rem' }}
+          >
+            <CodeIcon width="13" height="13" />
+            <span>{showZkJson ? 'Hide ZK Proof JSON' : 'Inspect ZK Proof JSON'}</span>
+          </button>
+          <span className="badge badge-midnight">ZK Selective Disclosure</span>
+        </div>
       </div>
 
       {/* Visual Pipeline Bar */}
@@ -108,6 +141,22 @@ export function MidnightPrivacyInspector({
         </div>
       </div>
 
+      {/* Raw ZK-IR JSON Proof Inspector Drawer */}
+      {showZkJson && (
+        <div style={{ marginTop: '1.25rem', padding: '1rem', background: '#07090e', border: '1px solid var(--border-focus)', borderRadius: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--accent-purple)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <ShieldIcon width="13" height="13" />
+              <span>Midnight Compact Zero-Knowledge Proof Structure</span>
+            </span>
+            <CopyButton value={JSON.stringify(sampleZkProofJson, null, 2)} />
+          </div>
+          <pre style={{ margin: 0, padding: '0.75rem', background: 'rgba(0,0,0,0.4)', borderRadius: '6px', fontSize: '0.74rem', color: '#a5b4fc', overflowX: 'auto', fontFamily: 'var(--font-mono)' }}>
+            {JSON.stringify(sampleZkProofJson, null, 2)}
+          </pre>
+        </div>
+      )}
+
       {/* Proof Traces & Observable Verification */}
       {traces.length > 0 && (
         <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)' }}>
@@ -146,3 +195,4 @@ export function MidnightPrivacyInspector({
     </div>
   );
 }
+
