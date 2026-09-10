@@ -57,10 +57,7 @@ shown is real and checkable on cardanoscan afterward.
 11. **CI/CD & Deployments (15s)** — show the green checks on GitHub Actions, the live dashboard on GitHub Pages, and on-chain contract addresses.
 12. **Close (10s)** — repo URL, X profile handle, summary of trustless + privacy-preserving freelance escrows.
 
-## Recording notes
+## Recorded Video Demo
 
-- Any free screen recorder works (OBS Studio, or your OS's built-in
-  recorder). Capture at 1080p, 30fps is plenty.
-- Keep terminal font size large enough to read on a phone screen.
-- Upload to YouTube (unlisted is fine) or X directly, then link it from
-  the root README's "Demo video" line.
+- **Google Drive Link:** [Watch Recorded Demo Video](https://drive.google.com/file/d/1NvIjqROaMdxUUOhqM1Si_rv3quN5dsKL/view?usp=sharing)
+- **Content:** Demonstrates Lace Wallet connect, observable privacy behavior, client witness, and successful ZK circuit execution (`deposit` and `release`).

@@ -78,9 +78,9 @@ is the source of truth for fund custody (see `docs/SETUP.md` step 8).
 
 ## Product & Video Demo
 
-[![StellarVault Demo Video - Wallet Connect & ZK Circuit Call](https://img.shields.io/badge/Demo%20Video-Watch%20Wallet%20Connect%20%26%20Circuit%20Execution-8b5cf6?style=for-the-badge&logo=youtube&logoColor=white)](https://frontend-eight-alpha-39.vercel.app/)
+[![StellarVault Demo Video - Wallet Connect & ZK Circuit Call](https://img.shields.io/badge/Demo%20Video-Watch%20Wallet%20Connect%20%26%20Circuit%20Execution-8b5cf6?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1NvIjqROaMdxUUOhqM1Si_rv3quN5dsKL/view?usp=sharing)
 
-> 🎬 **Demo Video Link:** [Watch StellarVault Demo Walkthrough](https://frontend-eight-alpha-39.vercel.app/) *(Recording script & timestamps in [`demo/DEMO_SCRIPT.md`](demo/DEMO_SCRIPT.md))*
+> 🎬 **Demo Video (Google Drive):** [Watch StellarVault Demo Walkthrough Video](https://drive.google.com/file/d/1NvIjqROaMdxUUOhqM1Si_rv3quN5dsKL/view?usp=sharing) *(Demonstrating Lace Wallet Connect + Successful Compact ZK Circuit Invocation)*
 > 
 > **X (Twitter) Profile:** [x.com/manh71546](https://x.com/manh71546) — see [`demo/X_PROFILE.md`](demo/X_PROFILE.md) for launch announcements.
 
