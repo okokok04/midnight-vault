@@ -17,9 +17,7 @@ export function MidnightEscrowPanel() {
     updateSecretKey,
     regenerateSecret,
     callCircuit,
-    resetEscrowState,
   } = useMidnightContract();
-
 
   return (
     <div className="midnight-escrow-panel" data-testid="midnight-escrow-panel">
@@ -139,19 +137,8 @@ export function MidnightEscrowPanel() {
             >
               circuit resolve(seller)
             </button>
-
-            {escrowState.state !== 'AWAITING_DEPOSIT' && escrowState.state !== 'LOCKED' && (
-              <button
-                onClick={resetEscrowState}
-                style={{ fontSize: '0.82rem', borderColor: 'var(--accent-purple)', color: 'var(--accent-purple)' }}
-                title="Reset demo lifecycle back to Step 1: Deposit"
-              >
-                ↻ Reset Demo Lifecycle
-              </button>
-            )}
           </div>
         </div>
-
 
         {/* 5. Explorer Verification Link */}
         <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>

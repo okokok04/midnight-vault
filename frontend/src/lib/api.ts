@@ -4,55 +4,55 @@ import type { PlatformStats } from "../types/stats";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
 
-// Fallback in-browser store populated with Cardano Preprod testnet data
-const DEFAULT_INITIAL_ESCROWS: EscrowRecord[] = [
+// Initial realistic demo seed data for client-side fallback
+const DEFAULT_ESCROWS: EscrowRecord[] = [
   {
-    id: "escrow_preprod_001",
-    buyerAddress: "addr_test1qrx867a5g44zsl6f9gq8v4j6y4v4m3s9k7d5x8w2c1b4a3buyer",
-    sellerAddress: "addr_test1qpk923m4x7v5a8f2g1c9k8d7s6w5x4v3m2n1b0c9a8seller",
-    arbiterAddress: "addr_test1qzn442x1c3v5b7n9m8l6k4j2h1g3f5d7s9a1b3c5v7arbiter",
+    id: "escrow_demo_001",
+    buyerAddress: "addr_test1qrx86kzkf8t7g0e2u3y5w6r8m9p4q1s2t3u4v5w6x7y8z9a",
+    sellerAddress: "addr_test1qpk92mztv1a3c5e7g9i2k4m6o8q0s2u4w6y8a0c2e4g6i8k",
+    arbiterAddress: "addr_test1qzn44rswx2b4d6f8h0j2l4n6p8r0t2v4x6z8b0d2f4h6j8l",
     milestoneAmountLovelace: 250_000_000,
-    deadlineUnixMs: Date.now() + 12 * 86_400_000,
+    deadlineUnixMs: Date.now() + 7 * 86_400_000,
     status: "locked",
-    scriptAddress: "addr_test1wp02sk3tqvw6d89m7hvgf87j9e8q7w8x4l1k2j3h4g5f6preprod",
-    lockTxHash: "0x7f2b8c9d10e4a5b6c7d8e9f0123456789abcdef0123456789abcdef012345678",
-    createdAt: new Date(Date.now() - 2 * 86_400_000).toISOString(),
-    updatedAt: new Date(Date.now() - 2 * 86_400_000).toISOString(),
+    scriptAddress: "addr_test1wprq7tzn4y2m6k8p0s2u4v6x8z0b2d4f6h8j0l2n4p6r8t0",
+    lockTxHash: "0x89a3769c4f1e2b8d0a7c6e5f4d3b2a19876543210fedcba98765432101234567",
+    createdAt: new Date(Date.now() - 3600_000 * 5).toISOString(),
+    updatedAt: new Date(Date.now() - 3600_000 * 5).toISOString(),
   },
   {
-    id: "escrow_preprod_002",
-    buyerAddress: "addr_test1qrx867a5g44zsl6f9gq8v4j6y4v4m3s9k7d5x8w2c1b4a3buyer",
-    sellerAddress: "addr_test1q77a10f9e8d7c6b5a43210fedcba9876543210abcdef012zkdev",
-    arbiterAddress: "addr_test1qzn442x1c3v5b7n9m8l6k4j2h1g3f5d7s9a1b3c5v7arbiter",
+    id: "escrow_demo_002",
+    buyerAddress: "addr_test1qrx86kzkf8t7g0e2u3y5w6r8m9p4q1s2t3u4v5w6x7y8z9a",
+    sellerAddress: "addr_test1q77a1p9xk3m5v7w9y1b3d5f7h9j1l3n5p7r9t1v3x5z7b9d",
+    arbiterAddress: "addr_test1qzn44rswx2b4d6f8h0j2l4n6p8r0t2v4x6z8b0d2f4h6j8l",
     milestoneAmountLovelace: 150_000_000,
-    deadlineUnixMs: Date.now() - 1 * 86_400_000,
+    deadlineUnixMs: Date.now() - 3600_000 * 2,
     status: "released",
-    scriptAddress: "addr_test1wp02sk3tqvw6d89m7hvgf87j9e8q7w8x4l1k2j3h4g5f6preprod",
-    lockTxHash: "0x1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f809",
-    settleTxHash: "0x9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba",
-    createdAt: new Date(Date.now() - 5 * 86_400_000).toISOString(),
-    updatedAt: new Date(Date.now() - 1 * 86_400_000).toISOString(),
+    scriptAddress: "addr_test1wprq7tzn4y2m6k8p0s2u4v6x8z0b2d4f6h8j0l2n4p6r8t0",
+    lockTxHash: "0x46a6fd7b1c3e5a7d9f0b2d4e6f8a0c2e4a6c8e0b2d4f6a8c0e2b4d6f8a0c2e4",
+    settleTxHash: "0x28f0a07c3e5a7b9d1f3e5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7",
+    createdAt: new Date(Date.now() - 86400_000 * 3).toISOString(),
+    updatedAt: new Date(Date.now() - 3600_000 * 2).toISOString(),
   },
 ];
 
-const DEFAULT_INITIAL_FEEDBACK: FeedbackRecord[] = [
+const DEFAULT_FEEDBACK: FeedbackRecord[] = [
   {
-    id: "fb_001",
+    id: "fb_demo_001",
     rating: 5,
-    message: "Flawless milestone payout and instant ZK privacy witness verification on testnet!",
-    walletAddress: "addr_test1qrx86...buyer",
+    message: "Zero-Knowledge selective disclosure is phenomenal. Milestone released without leaking arbiter key.",
+    createdAt: new Date(Date.now() - 3600_000 * 12).toISOString(),
+    updatedAt: new Date(Date.now() - 3600_000 * 12).toISOString(),
+    walletAddress: "addr_test1qrx86kzkf8t7g0e2u3y5w6r8m9p4",
     status: "actioned",
-    createdAt: new Date(Date.now() - 86_400_000).toISOString(),
-    updatedAt: new Date(Date.now() - 86_400_000).toISOString(),
   },
   {
-    id: "fb_002",
+    id: "fb_demo_002",
     rating: 5,
-    message: "Aiken Plutus V3 script dispute resolution worked as advertised.",
-    walletAddress: "addr_test1qpk92...dev",
+    message: "Aiken Plutus V3 validator executed seamlessly on Cardano Preprod. Fast settlement.",
+    createdAt: new Date(Date.now() - 3600_000 * 24).toISOString(),
+    updatedAt: new Date(Date.now() - 3600_000 * 24).toISOString(),
+    walletAddress: "addr_test1qpk92mztv1a3c5e7g9i2k4m6o8q0",
     status: "triaged",
-    createdAt: new Date(Date.now() - 3600_000 * 4).toISOString(),
-    updatedAt: new Date(Date.now() - 3600_000 * 4).toISOString(),
   },
 ];
 
@@ -60,36 +60,42 @@ const DEFAULT_INITIAL_FEEDBACK: FeedbackRecord[] = [
 function getLocalEscrows(): EscrowRecord[] {
   try {
     const raw = localStorage.getItem("stellarvault_escrows");
-    if (raw) return JSON.parse(raw);
+    if (!raw) {
+      localStorage.setItem("stellarvault_escrows", JSON.stringify(DEFAULT_ESCROWS));
+      return DEFAULT_ESCROWS;
+    }
+    return JSON.parse(raw);
   } catch {
-    // ignore
+    return DEFAULT_ESCROWS;
   }
-  return DEFAULT_INITIAL_ESCROWS;
 }
 
-function saveLocalEscrows(data: EscrowRecord[]) {
+function saveLocalEscrows(escrows: EscrowRecord[]): void {
   try {
-    localStorage.setItem("stellarvault_escrows", JSON.stringify(data));
+    localStorage.setItem("stellarvault_escrows", JSON.stringify(escrows));
   } catch {
-    // ignore
+    // Ignore storage quota
   }
 }
 
 function getLocalFeedback(): FeedbackRecord[] {
   try {
     const raw = localStorage.getItem("stellarvault_feedback");
-    if (raw) return JSON.parse(raw);
+    if (!raw) {
+      localStorage.setItem("stellarvault_feedback", JSON.stringify(DEFAULT_FEEDBACK));
+      return DEFAULT_FEEDBACK;
+    }
+    return JSON.parse(raw);
   } catch {
-    // ignore
+    return DEFAULT_FEEDBACK;
   }
-  return DEFAULT_INITIAL_FEEDBACK;
 }
 
-function saveLocalFeedback(data: FeedbackRecord[]) {
+function saveLocalFeedback(feedback: FeedbackRecord[]): void {
   try {
-    localStorage.setItem("stellarvault_feedback", JSON.stringify(data));
+    localStorage.setItem("stellarvault_feedback", JSON.stringify(feedback));
   } catch {
-    // ignore
+    // Ignore storage quota
   }
 }
 
@@ -115,31 +121,27 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
     return res.json() as Promise<T>;
   } catch (err) {
-    // If backend is not available (e.g. running on static Vercel host without local port 4000)
-    // gracefully fall back to local client store so UI is 100% functional.
+    // Graceful fallback for standalone client-side demo when backend is offline
     if (path.startsWith("/escrows")) {
       return handleLocalEscrows<T>(path, init);
     }
     if (path.startsWith("/feedback")) {
       return handleLocalFeedback<T>(path, init);
     }
-    if (path.startsWith("/stats")) {
+    if (path === "/stats") {
       const escrows = getLocalEscrows();
       const feedback = getLocalFeedback();
-      const escrowsByStatus = escrows.reduce<Record<string, number>>((acc, e) => {
-        acc[e.status] = (acc[e.status] || 0) + 1;
-        return acc;
-      }, {});
-      const totalLovelaceLocked = escrows
-        .filter((e) => e.status === "locked")
-        .reduce((sum, e) => sum + e.milestoneAmountLovelace, 0);
-
+      const escrowsByStatus: Record<string, number> = {};
+      for (const e of escrows) {
+        escrowsByStatus[e.status] = (escrowsByStatus[e.status] || 0) + 1;
+      }
+      const totalRatings = feedback.reduce((sum, f) => sum + f.rating, 0);
       const stats: PlatformStats = {
         totalEscrows: escrows.length,
         escrowsByStatus,
-        totalLovelaceLocked,
+        totalLovelaceLocked: escrows.reduce((sum, e) => sum + e.milestoneAmountLovelace, 0),
         totalFeedback: feedback.length,
-        averageRating: feedback.length > 0 ? Number((feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length).toFixed(1)) : 5.0,
+        averageRating: feedback.length > 0 ? Number((totalRatings / feedback.length).toFixed(1)) : null,
       };
       return stats as T;
     }
@@ -149,53 +151,79 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 function handleLocalEscrows<T>(path: string, init?: RequestInit): T {
   const escrows = getLocalEscrows();
-  const method = init?.method?.toUpperCase() ?? "GET";
 
-  if (method === "GET" && path === "/escrows") {
+  if (path === "/escrows" && (!init || init.method === "GET")) {
     return escrows as T;
   }
 
-  if (method === "POST" && path === "/escrows") {
-    const body: CreateEscrowInput = JSON.parse(init?.body as string);
-    const newRecord: EscrowRecord = {
-      id: "escrow_" + Math.random().toString(36).slice(2, 10),
+  if (path === "/escrows" && init?.method === "POST") {
+    const body: CreateEscrowInput = JSON.parse(init.body as string);
+    const newEscrow: EscrowRecord = {
+      id: `escrow_${Math.random().toString(36).slice(2, 10)}`,
       buyerAddress: body.buyerAddress,
       sellerAddress: body.sellerAddress,
       arbiterAddress: body.arbiterAddress,
       milestoneAmountLovelace: body.milestoneAmountLovelace,
       deadlineUnixMs: body.deadlineUnixMs,
       status: "locked",
-      scriptAddress: "addr_test1wp02sk3tqvw6d89m7hvgf87j9e8q7w8x4l1k2j3h4g5f6preprod",
-      lockTxHash: "0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join(""),
+      scriptAddress: "addr_test1wprq7tzn4y2m6k8p0s2u4v6x8z0b2d4f6h8j0l2n4p6r8t0",
+      lockTxHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    const updated = [newRecord, ...escrows];
-    saveLocalEscrows(updated);
-    return newRecord as T;
+    saveLocalEscrows([...escrows, newEscrow]);
+    return newEscrow as T;
   }
 
-  const match = path.match(/^\/escrows\/([^/]+)(\/(release|refund|resolve))?$/);
-  if (match) {
-    const id = match[1];
-    const action = match[3];
-    const item = escrows.find((e) => e.id === id);
-    if (!item) throw new Error("Escrow not found");
+  const releaseMatch = path.match(/^\/escrows\/([^/]+)\/release$/);
+  if (releaseMatch) {
+    const id = releaseMatch[1];
+    const updated = escrows.map((e) =>
+      e.id === id
+        ? {
+            ...e,
+            status: "released" as const,
+            settleTxHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
+            updatedAt: new Date().toISOString(),
+          }
+        : e,
+    );
+    saveLocalEscrows(updated);
+    return updated.find((e) => e.id === id) as T;
+  }
 
-    if (action === "release") {
-      item.status = "released";
-      item.settleTxHash = "0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
-    } else if (action === "refund") {
-      item.status = "refunded";
-      item.settleTxHash = "0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
-    } else if (action === "resolve") {
-      const parsed = JSON.parse(init?.body as string || "{}");
-      item.status = parsed.paySeller ? "released" : "refunded";
-      item.settleTxHash = "0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
-    }
-    item.updatedAt = new Date().toISOString();
-    saveLocalEscrows(escrows);
-    return item as T;
+  const refundMatch = path.match(/^\/escrows\/([^/]+)\/refund$/);
+  if (refundMatch) {
+    const id = refundMatch[1];
+    const updated = escrows.map((e) =>
+      e.id === id
+        ? {
+            ...e,
+            status: "refunded" as const,
+            settleTxHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
+            updatedAt: new Date().toISOString(),
+          }
+        : e,
+    );
+    saveLocalEscrows(updated);
+    return updated.find((e) => e.id === id) as T;
+  }
+
+  const resolveMatch = path.match(/^\/escrows\/([^/]+)\/resolve$/);
+  if (resolveMatch) {
+    const id = resolveMatch[1];
+    const updated = escrows.map((e) =>
+      e.id === id
+        ? {
+            ...e,
+            status: "resolved" as const,
+            settleTxHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
+            updatedAt: new Date().toISOString(),
+          }
+        : e,
+    );
+    saveLocalEscrows(updated);
+    return updated.find((e) => e.id === id) as T;
   }
 
   return escrows as T;
@@ -203,45 +231,43 @@ function handleLocalEscrows<T>(path: string, init?: RequestInit): T {
 
 function handleLocalFeedback<T>(path: string, init?: RequestInit): T {
   const list = getLocalFeedback();
-  const method = init?.method?.toUpperCase() ?? "GET";
 
-  if (method === "GET" && path === "/feedback") {
+  if (path === "/feedback" && (!init || init.method === "GET")) {
     return list as T;
   }
 
-  if (method === "POST" && path === "/feedback") {
-    const body: FeedbackInput = JSON.parse(init?.body as string);
+  if (path === "/feedback" && init?.method === "POST") {
+    const body: FeedbackInput = JSON.parse(init.body as string);
     const now = new Date().toISOString();
     const newFb: FeedbackRecord = {
-      id: "fb_" + Math.random().toString(36).slice(2, 9),
+      id: `fb_${Math.random().toString(36).slice(2, 10)}`,
       rating: body.rating,
       message: body.message,
-      walletAddress: body.walletAddress,
-      status: "new",
       createdAt: now,
       updatedAt: now,
+      walletAddress: body.walletAddress,
+      status: "new",
     };
-    const updated = [newFb, ...list];
-    saveLocalFeedback(updated);
+    saveLocalFeedback([...list, newFb]);
     return newFb as T;
   }
 
 
-  const match = path.match(/^\/feedback\/([^/]+)(\/status)?$/);
-  if (match) {
-    const id = match[1];
-    if (method === "DELETE") {
-      const filtered = list.filter((f) => f.id !== id);
-      saveLocalFeedback(filtered);
-      return undefined as T;
-    }
-    const body = JSON.parse(init?.body as string || "{}");
-    const item = list.find((f) => f.id === id);
-    if (item && body.status) {
-      item.status = body.status;
-      saveLocalFeedback(list);
-      return item as T;
-    }
+  const statusMatch = path.match(/^\/feedback\/([^/]+)\/status$/);
+  if (statusMatch) {
+    const id = statusMatch[1];
+    const { status } = JSON.parse(init?.body as string);
+    const updated = list.map((f) => (f.id === id ? { ...f, status } : f));
+    saveLocalFeedback(updated);
+    return updated.find((f) => f.id === id) as T;
+  }
+
+  const deleteMatch = path.match(/^\/feedback\/([^/]+)$/);
+  if (deleteMatch && init?.method === "DELETE") {
+    const id = deleteMatch[1];
+    const filtered = list.filter((f) => f.id !== id);
+    saveLocalFeedback(filtered);
+    return undefined as T;
   }
 
   return list as T;

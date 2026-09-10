@@ -372,14 +372,7 @@ a:hover {
   box-shadow: var(--shadow-card);
   max-width: 100%;
   overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
-
-.nav-tabs::-webkit-scrollbar {
-  display: none;
-}
-
 
 .nav-tab-button {
   background: transparent;

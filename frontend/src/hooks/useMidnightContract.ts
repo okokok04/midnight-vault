@@ -129,14 +129,6 @@ export function useMidnightContract() {
     [escrowState, privateState.localSecretKey]
   );
 
-  const resetEscrowState = useCallback(() => {
-    setEscrowState((prev) => ({
-      ...prev,
-      state: 'AWAITING_DEPOSIT',
-    }));
-    setError(null);
-  }, []);
-
   return {
     privateState,
     escrowState,
@@ -146,7 +138,5 @@ export function useMidnightContract() {
     updateSecretKey,
     regenerateSecret,
     callCircuit,
-    resetEscrowState,
   };
 }
-
