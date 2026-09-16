@@ -25,6 +25,12 @@ export class MidnightPrivateStore {
     return fresh;
   }
 
+  static generateFreshEscrowSecret(): string {
+    const fresh = generateRandomSecret();
+    MidnightPrivateStore.setEscrowSecret(fresh);
+    return fresh;
+  }
+
   static setEscrowSecret(secret: string): void {
     try {
       localStorage.setItem(STORAGE_KEYS.ESCROW_PRIVATE_SECRET, secret);
@@ -45,6 +51,12 @@ export class MidnightPrivateStore {
     } catch {
       // Non-browser / test
     }
+    const fresh = generateRandomSecret();
+    MidnightPrivateStore.setFeedbackParticipantSecret(fresh);
+    return fresh;
+  }
+
+  static generateFreshFeedbackSecret(): string {
     const fresh = generateRandomSecret();
     MidnightPrivateStore.setFeedbackParticipantSecret(fresh);
     return fresh;

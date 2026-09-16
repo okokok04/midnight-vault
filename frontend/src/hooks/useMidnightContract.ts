@@ -78,7 +78,7 @@ export function useMidnightContract(laceApi?: MidnightLaceApi | null) {
   }, []);
 
   const regenerateSecret = useCallback(() => {
-    const fresh = MidnightPrivateStore.getEscrowSecret();
+    const fresh = MidnightPrivateStore.generateFreshEscrowSecret();
     setPrivateState((prev) => ({ ...prev, localSecretKey: fresh }));
   }, []);
 

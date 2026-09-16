@@ -65,7 +65,7 @@ export function useMidnightFeedback(laceApi?: MidnightLaceApi | null) {
   }, []);
 
   const regenerateSecret = useCallback(() => {
-    const fresh = MidnightPrivateStore.getFeedbackParticipantSecret();
+    const fresh = MidnightPrivateStore.generateFreshFeedbackSecret();
     setParticipantSecret(fresh);
   }, []);
 
