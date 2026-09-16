@@ -6,6 +6,16 @@ interface Props {
 }
 
 export function HeroBanner({ setActiveTab }: Props) {
+  const handleNavigate = (tab: "midnight" | "survey" | "cardano" | "analytics" | "docs" | "about") => {
+    setActiveTab(tab);
+    setTimeout(() => {
+      const workspace = document.getElementById("dapp-workspace");
+      if (workspace) {
+        workspace.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 50);
+  };
+
   return (
     <section className="hero-banner" data-testid="hero-banner">
       <div className="hero-header-row">
@@ -28,7 +38,7 @@ export function HeroBanner({ setActiveTab }: Props) {
         <div className="hero-actions">
           <button
             className="primary hero-btn"
-            onClick={() => setActiveTab("midnight")}
+            onClick={() => handleNavigate("midnight")}
           >
             <SparklesIcon width="14" height="14" />
             <span>Launch ZK Escrow</span>
@@ -39,7 +49,7 @@ export function HeroBanner({ setActiveTab }: Props) {
 
       {/* Feature Command Strip */}
       <div className="hero-pillars">
-        <div className="hero-pillar-item" onClick={() => setActiveTab("midnight")}>
+        <div className="hero-pillar-item" onClick={() => handleNavigate("midnight")}>
           <div className="pillar-icon-wrapper">
             <LockIcon width="14" height="14" />
           </div>
@@ -49,7 +59,7 @@ export function HeroBanner({ setActiveTab }: Props) {
           </div>
         </div>
 
-        <div className="hero-pillar-item" onClick={() => setActiveTab("cardano")}>
+        <div className="hero-pillar-item" onClick={() => handleNavigate("cardano")}>
           <div className="pillar-icon-wrapper">
             <ShieldIcon width="14" height="14" />
           </div>
@@ -59,7 +69,7 @@ export function HeroBanner({ setActiveTab }: Props) {
           </div>
         </div>
 
-        <div className="hero-pillar-item" onClick={() => setActiveTab("survey")}>
+        <div className="hero-pillar-item" onClick={() => handleNavigate("survey")}>
           <div className="pillar-icon-wrapper">
             <SparklesIcon width="14" height="14" />
           </div>

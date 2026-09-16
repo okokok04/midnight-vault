@@ -49,7 +49,7 @@ export function App() {
       )}
 
       {/* Linear-Style Segmented Navigation Tabstrip */}
-      <nav className="nav-tabs" aria-label="Network DApp Tabs">
+      <nav id="dapp-workspace" className="nav-tabs" aria-label="Network DApp Tabs">
         <button
           className={`nav-tab-button ${activeTab === "midnight" ? "active" : ""}`}
           onClick={() => setActiveTab("midnight")}
