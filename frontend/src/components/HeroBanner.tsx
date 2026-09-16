@@ -1,4 +1,4 @@
-import { ShieldIcon, SparklesIcon, LockIcon, LayersIcon, ArrowRightIcon } from "./Icons";
+import { ShieldIcon, SparklesIcon, LockIcon, ArrowRightIcon } from "./Icons";
 
 interface Props {
   activeTab: "midnight" | "survey" | "cardano" | "analytics" | "docs" | "about";
@@ -33,22 +33,6 @@ export function HeroBanner({ setActiveTab }: Props) {
             <SparklesIcon width="14" height="14" />
             <span>Launch ZK Escrow</span>
             <ArrowRightIcon width="12" height="12" />
-          </button>
-
-          <button
-            className="secondary-btn hero-btn"
-            onClick={() => setActiveTab("docs")}
-          >
-            <LayersIcon width="14" height="14" />
-            <span>Protocol Specs</span>
-          </button>
-
-          <button
-            className="secondary-btn hero-btn"
-            onClick={() => setActiveTab("about")}
-          >
-            <ShieldIcon width="14" height="14" />
-            <span>Security</span>
           </button>
         </div>
       </div>
