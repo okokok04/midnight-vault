@@ -934,16 +934,120 @@ code.hash {
   margin-bottom: 1rem;
 }
 
-/* Footer */
-.app-footer {
-  margin-top: 3.5rem;
-  padding-top: 1.5rem;
+/* Tier-1 Master Footer */
+.master-footer {
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--border);
+  background: rgba(11, 14, 20, 0.6);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.footer-top-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .footer-top-grid {
+    grid-template-columns: 2fr 1fr 1.2fr 1.2fr;
+  }
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.footer-logo {
+  width: 34px;
+  height: 34px;
+}
+
+.footer-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 32ch;
+}
+
+.footer-heading {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.85rem;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-nav-link {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.footer-nav-link:hover {
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.footer-bottom-bar {
+  padding-top: 1.25rem;
+  padding-bottom: 1.5rem;
   border-top: 1px solid var(--border-subtle);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--text-dim);
 }
+
+.footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.footer-socials a, .footer-socials button {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.footer-socials a:hover, .footer-socials button:hover {
+  color: #ffffff;
+}
+
