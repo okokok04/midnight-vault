@@ -25,14 +25,14 @@ export function ProtocolAnalytics({
       {/* 1. Protocol Health & Metrics */}
       <div className="stats-bar">
         <div className="stats-tile">
-          <div className="stats-tile-value" style={{ color: 'var(--accent-purple)' }}>
+          <div className="stats-tile-value" style={{ color: '#60a5fa' }}>
             {loading ? "…" : stats?.totalEscrows ?? 0}
           </div>
           <div className="stats-tile-label">Total Escrows Created</div>
         </div>
 
         <div className="stats-tile">
-          <div className="stats-tile-value" style={{ color: 'var(--accent-cyan)' }}>
+          <div className="stats-tile-value" style={{ color: '#38bdf8' }}>
             {loading
               ? "…"
               : `${((stats?.totalLovelaceLocked ?? 0) / 1_000_000).toLocaleString(undefined, { maximumFractionDigits: 1 })} ADA`}
@@ -41,14 +41,14 @@ export function ProtocolAnalytics({
         </div>
 
         <div className="stats-tile">
-          <div className="stats-tile-value" style={{ color: 'var(--success)' }}>
+          <div className="stats-tile-value" style={{ color: '#34d399' }}>
             {loading ? "…" : stats?.totalFeedback ?? 0}
           </div>
           <div className="stats-tile-label">Community Submissions</div>
         </div>
 
         <div className="stats-tile">
-          <div className="stats-tile-value" style={{ color: 'var(--warning)' }}>
+          <div className="stats-tile-value" style={{ color: '#fbbf24' }}>
             {loading
               ? "…"
               : stats?.averageRating
@@ -60,53 +60,53 @@ export function ProtocolAnalytics({
       </div>
 
       {/* 2. On-chain Verified Activity Stream */}
-      <div className="card" style={{ marginTop: "1.5rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+      <div className="card" style={{ marginTop: "1.25rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem", flexWrap: "wrap", gap: "0.5rem" }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: "1.1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <h3 style={{ margin: 0, fontSize: "1.05rem", display: "flex", alignItems: "center", gap: "0.45rem" }}>
               <ActivityIcon width="18" height="18" />
               <span>Real-time On-Chain Activity Stream</span>
             </h3>
-            <p style={{ margin: "0.25rem 0 0", fontSize: "0.82rem", color: "var(--text-muted)" }}>
+            <p style={{ margin: "0.2rem 0 0", fontSize: "0.8rem", color: "var(--text-muted)" }}>
               Live transaction submissions and Zero-Knowledge proofs verified on Preprod networks.
             </p>
           </div>
           <span className="badge badge-midnight">
-            <span className="status-dot" style={{ width: "6px", height: "6px" }} /> Live Sync
+            <span className="status-dot" style={{ width: "5px", height: "5px" }} /> Live Sync
           </span>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-          <div className="trace-item" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-              <span className="badge badge-released" style={{ fontSize: "0.7rem" }}>CONFIRMED</span>
-              <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>Midnight ZK Escrow Deposit</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <div className="trace-item" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span className="badge badge-released" style={{ fontSize: "0.68rem" }}>CONFIRMED</span>
+              <span style={{ fontSize: "0.82rem", fontWeight: 600 }}>Midnight ZK Escrow Deposit</span>
             </div>
-            <code className="hash" style={{ fontSize: "0.75rem" }}>0x42f89c09c319b9df19bb23dae267104b205312f275e771e7a6858066bb739ae0</code>
+            <code className="hash" style={{ fontSize: "0.74rem" }}>0x42f89c09c319b9df19bb23dae267104b205312f275e771e7a6858066bb739ae0</code>
           </div>
 
-          <div className="trace-item" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-              <span className="badge badge-midnight" style={{ fontSize: "0.7rem" }}>ZK PROOF</span>
-              <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>Anonymous Feedback Nullifier Generated</span>
+          <div className="trace-item" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span className="badge badge-midnight" style={{ fontSize: "0.68rem" }}>ZK PROOF</span>
+              <span style={{ fontSize: "0.82rem", fontWeight: 600 }}>Anonymous Feedback Nullifier Generated</span>
             </div>
-            <code className="hash" style={{ fontSize: "0.75rem" }}>0xnullifier_7f2b8c9d10e4a5b6c7d8e9f0123456789abcdef0123456789abcdef01234</code>
+            <code className="hash" style={{ fontSize: "0.74rem" }}>0xnullifier_7f2b8c9d10e4a5b6c7d8e9f0123456789abcdef0123456789abcdef01234</code>
           </div>
 
-          <div className="trace-item" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-              <span className="badge badge-locked" style={{ fontSize: "0.7rem" }}>CARDANO UTXO</span>
-              <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>Aiken Multi-sig Lock Confirmed</span>
+          <div className="trace-item" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span className="badge badge-locked" style={{ fontSize: "0.68rem" }}>CARDANO UTXO</span>
+              <span style={{ fontSize: "0.82rem", fontWeight: 600 }}>Aiken Multi-sig Lock Confirmed</span>
             </div>
-            <code className="hash" style={{ fontSize: "0.75rem" }}>a3023e7e3730290372a7c5fa76a1e65006cc3de5df5b03aa7a52da81e1113031</code>
+            <code className="hash" style={{ fontSize: "0.74rem" }}>a3023e7e3730290372a7c5fa76a1e65006cc3de5df5b03aa7a52da81e1113031</code>
           </div>
         </div>
       </div>
 
       {/* 3. Community Feedback Management */}
-      <div className="card" style={{ marginTop: "1.5rem" }}>
-        <h3 style={{ margin: "0 0 1rem", fontSize: "1.1rem" }}>
-          Community Submissions & Triage Pipeline
+      <div className="card" style={{ marginTop: "1.25rem" }}>
+        <h3 style={{ margin: "0 0 0.85rem", fontSize: "1.05rem" }}>
+          Community Submissions &amp; Triage Pipeline
         </h3>
         <FeedbackList
           feedback={feedback}

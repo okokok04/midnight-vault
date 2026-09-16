@@ -39,43 +39,43 @@ export function MidnightPrivacyInspector({
 
   return (
     <div className="card privacy-inspector-card" data-testid="privacy-inspector">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.6rem' }}>
         <div>
-          <h3 style={{ margin: 0, fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <SparklesIcon width="20" height="20" />
+          <h3 style={{ margin: 0, fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            <SparklesIcon width="18" height="18" />
             <span>Observable Privacy Behavior Inspector</span>
           </h3>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Zero-Knowledge proofs allow you to prove buyer/arbiter authority without ever disclosing your secret key.
+          <p style={{ margin: '0.2rem 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            Zero-Knowledge proofs prove buyer/arbiter authority without disclosing private keys.
           </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <button
             type="button"
             className="secondary-btn"
             onClick={() => setShowZkJson(!showZkJson)}
-            style={{ fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.35rem 0.75rem' }}
+            style={{ fontSize: '0.74rem', padding: '0.3rem 0.65rem' }}
           >
-            <CodeIcon width="13" height="13" />
-            <span>{showZkJson ? 'Hide ZK Proof JSON' : 'Inspect ZK Proof JSON'}</span>
+            <CodeIcon width="12" height="12" />
+            <span>{showZkJson ? 'Hide Proof JSON' : 'Inspect ZK Proof JSON'}</span>
           </button>
-          <span className="badge badge-midnight">ZK Selective Disclosure</span>
+          <span className="badge badge-midnight">ZK Prover</span>
         </div>
       </div>
 
       {/* Visual Pipeline Bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.65rem', marginBottom: '1.15rem', background: 'var(--surface-alt)', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
-        <div style={{ fontSize: '0.78rem', color: '#fb7185', display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 600 }}>
-          <LockIcon width="14" height="14" />
-          <span>1. Local Private Witness</span>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.5rem', marginBottom: '1rem', background: 'var(--bg-inset)', padding: '0.65rem 0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+        <div style={{ fontSize: '0.74rem', color: '#fb7185', display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
+          <LockIcon width="12" height="12" />
+          <span>1. Local Witness</span>
         </div>
-        <div style={{ fontSize: '0.78rem', color: '#a5b4fc', display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 600 }}>
-          <LayersIcon width="14" height="14" />
-          <span>2. Compact Circuit (ZK-IR)</span>
+        <div style={{ fontSize: '0.74rem', color: '#93c5fa', display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
+          <LayersIcon width="12" height="12" />
+          <span>2. Compact Circuit</span>
         </div>
-        <div style={{ fontSize: '0.78rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 600 }}>
-          <GlobeIcon width="14" height="14" />
-          <span>3. Public Preprod State</span>
+        <div style={{ fontSize: '0.74rem', color: '#34d399', display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
+          <GlobeIcon width="12" height="12" />
+          <span>3. Public State</span>
         </div>
       </div>
 
@@ -84,32 +84,32 @@ export function MidnightPrivacyInspector({
         <div className="privacy-panel private-panel">
           <div className="panel-header">
             <span className="panel-badge private-badge">
-              <LockIcon width="12" height="12" />
+              <LockIcon width="11" height="11" />
               <span>Private Witness (Never Disclosed)</span>
             </span>
           </div>
           <p className="panel-desc">
-            Kept strictly inside local client memory. Never leaves your browser, never transmitted in any network packet or on-chain transaction.
+            Kept strictly inside browser memory. Never leaves your client or on-chain transaction.
           </p>
-          <div style={{ marginTop: '0.75rem' }}>
+          <div style={{ marginTop: '0.65rem' }}>
             <label htmlFor="local-secret-input">
               <code>localSecretKey(): Bytes&lt;32&gt;</code>
             </label>
-            <div style={{ display: 'flex', gap: '0.45rem' }}>
+            <div style={{ display: 'flex', gap: '0.35rem' }}>
               <input
                 id="local-secret-input"
                 type="password"
                 value={privateState.localSecretKey}
                 onChange={(e) => onUpdateSecret(e.target.value)}
-                style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }}
+                style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)' }}
               />
               <button
                 type="button"
                 onClick={onRegenerateSecret}
                 title="Generate fresh secret"
-                style={{ fontSize: '0.78rem', whiteSpace: 'nowrap', padding: '0.45rem 0.8rem' }}
+                style={{ fontSize: '0.74rem', whiteSpace: 'nowrap', padding: '0.4rem 0.65rem' }}
               >
-                <RefreshCwIcon width="13" height="13" />
+                <RefreshCwIcon width="12" height="12" />
                 Fresh
               </button>
             </div>
@@ -120,19 +120,19 @@ export function MidnightPrivacyInspector({
         <div className="privacy-panel public-panel">
           <div className="panel-header">
             <span className="panel-badge public-badge">
-              <GlobeIcon width="12" height="12" />
+              <GlobeIcon width="11" height="11" />
               <span>Public Ledger State (Disclosed)</span>
             </span>
           </div>
           <p className="panel-desc">
-            Opaque hash computed by <code>derivePublicKey()</code> via ZK circuit and disclosed deliberately through <code>disclose()</code>.
+            Opaque hash computed by <code>derivePublicKey()</code> via ZK circuit.
           </p>
-          <div style={{ marginTop: '0.75rem' }}>
+          <div style={{ marginTop: '0.65rem' }}>
             <label>
               <code>export sealed ledger buyer: Bytes&lt;32&gt;</code>
             </label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <code className="hash" style={{ wordBreak: 'break-all', fontSize: '0.78rem', flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <code className="hash" style={{ wordBreak: 'break-all', fontSize: '0.74rem', flex: 1 }}>
                 {privateState.derivedPublicKey || 'Deriving...'}
               </code>
               <CopyButton value={privateState.derivedPublicKey} />
@@ -143,15 +143,15 @@ export function MidnightPrivacyInspector({
 
       {/* Raw ZK-IR JSON Proof Inspector Drawer */}
       {showZkJson && (
-        <div style={{ marginTop: '1.25rem', padding: '1rem', background: '#07090e', border: '1px solid var(--border-focus)', borderRadius: '10px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--accent-purple)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <ShieldIcon width="13" height="13" />
+        <div style={{ marginTop: '1rem', padding: '0.85rem', background: 'var(--bg-inset)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+            <span style={{ fontSize: '0.74rem', fontWeight: 600, color: '#93c5fa', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <ShieldIcon width="12" height="12" />
               <span>Midnight Compact Zero-Knowledge Proof Structure</span>
             </span>
             <CopyButton value={JSON.stringify(sampleZkProofJson, null, 2)} />
           </div>
-          <pre style={{ margin: 0, padding: '0.75rem', background: 'rgba(0,0,0,0.4)', borderRadius: '6px', fontSize: '0.74rem', color: '#a5b4fc', overflowX: 'auto', fontFamily: 'var(--font-mono)' }}>
+          <pre style={{ margin: 0, padding: '0.65rem', background: '#090c12', borderRadius: 'var(--radius-xs)', fontSize: '0.72rem', color: '#93c5fa', overflowX: 'auto', fontFamily: 'var(--font-mono)' }}>
             {JSON.stringify(sampleZkProofJson, null, 2)}
           </pre>
         </div>
@@ -159,38 +159,38 @@ export function MidnightPrivacyInspector({
 
       {/* Proof Traces & Observable Verification */}
       {traces.length > 0 && (
-        <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)' }}>
-          <h4 style={{ margin: '0 0 0.85rem', fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
-            <CheckCircleIcon width="16" height="16" />
+        <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)' }}>
+          <h4 style={{ margin: '0 0 0.65rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.45rem', color: 'var(--text-secondary)' }}>
+            <CheckCircleIcon width="14" height="14" />
             <span>Cryptographic Proof Execution Trace</span>
           </h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
             {traces.map((trace, idx) => (
-              <div key={idx} className="trace-item" style={{ fontSize: '0.82rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem', flexWrap: 'wrap', gap: '0.4rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span className={`badge badge-${trace.zkProofGenerated ? 'released' : 'refunded'}`} style={{ fontSize: '0.7rem' }}>
+              <div key={idx} className="trace-item" style={{ fontSize: '0.78rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem', flexWrap: 'wrap', gap: '0.35rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <span className={`badge badge-${trace.zkProofGenerated ? 'released' : 'refunded'}`} style={{ fontSize: '0.65rem' }}>
                       {trace.zkProofGenerated ? 'ZK-VERIFIED' : 'FAILED'}
                     </span>
                     <strong style={{ color: 'var(--text)' }}>Circuit: {trace.circuitName}()</strong>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
                     {trace.timestamp}
                   </span>
                 </div>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginBottom: '0.35rem' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.74rem', marginBottom: '0.25rem' }}>
                   {trace.privateWitnessUsed}
                 </div>
                 {trace.zkProofHash && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.25rem' }}>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>ZK Proof Hash:</span>
-                    <code className="hash" style={{ fontSize: '0.74rem' }}>{trace.zkProofHash}</code>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.2rem' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>ZK Proof Hash:</span>
+                    <code className="hash" style={{ fontSize: '0.72rem' }}>{trace.zkProofHash}</code>
                   </div>
                 )}
                 {trace.txHash && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.25rem' }}>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>Tx Hash:</span>
-                    <code className="hash" style={{ fontSize: '0.74rem' }}>{trace.txHash}</code>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.2rem' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>Tx Hash:</span>
+                    <code className="hash" style={{ fontSize: '0.72rem' }}>{trace.txHash}</code>
                     <CopyButton value={trace.txHash} />
                   </div>
                 )}
@@ -202,4 +202,3 @@ export function MidnightPrivacyInspector({
     </div>
   );
 }
-

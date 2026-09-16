@@ -142,36 +142,36 @@ export function EscrowForm({
 
   return (
     <form className="card escrow-form-card" onSubmit={handleSubmit}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.75rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.6rem" }}>
         <div>
-          <h2 className="section-title" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.55rem" }}>
-            <LockIcon width="20" height="20" />
+          <h2 className="section-title" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.45rem" }}>
+            <LockIcon width="18" height="18" />
             <span>New milestone escrow</span>
           </h2>
-          <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "var(--text-muted)" }}>
-            Lock native ADA into an Aiken Plutus V3 contract with cryptographic non-custodial dispute resolution.
+          <p style={{ margin: "0.2rem 0 0", fontSize: "0.8rem", color: "var(--text-muted)" }}>
+            Lock native ADA with Aiken Plutus V3 multi-signature verification.
           </p>
         </div>
-        <span className="badge badge-locked">Plutus V3 Preprod</span>
+        <span className="badge badge-locked">Plutus V3</span>
       </div>
 
       {/* Quick Template Presets */}
-      <div style={{ marginBottom: "1.25rem" }}>
-        <div style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-dim)", marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-          <SparklesIcon width="13" height="13" />
+      <div style={{ marginBottom: "1rem" }}>
+        <div style={{ fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-dim)", marginBottom: "0.4rem", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+          <SparklesIcon width="12" height="12" />
           <span>Quick Milestone Presets</span>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "0.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "0.4rem" }}>
           {MILESTONE_TEMPLATES.map((tmpl) => (
             <button
               key={tmpl.title}
               type="button"
               className="preset-chip-btn"
               onClick={() => applyTemplate(tmpl)}
-              title={`Auto-fill ${tmpl.title} with ${tmpl.ada} ADA and +${tmpl.days}d deadline`}
+              title={`Auto-fill ${tmpl.title} with ${tmpl.ada} ADA`}
             >
-              <div style={{ fontWeight: 600, fontSize: "0.82rem", color: "var(--text)" }}>{tmpl.title}</div>
-              <div style={{ fontSize: "0.74rem", color: "var(--accent-purple)", fontVariantNumeric: "tabular-nums" }}>{tmpl.ada} ADA • {tmpl.days}d</div>
+              <div style={{ fontWeight: 600, fontSize: "0.78rem", color: "var(--text)" }}>{tmpl.title}</div>
+              <div style={{ fontSize: "0.72rem", color: "#93c5fa", fontVariantNumeric: "tabular-nums" }}>{tmpl.ada} ADA • {tmpl.days}d</div>
             </button>
           ))}
         </div>
@@ -180,7 +180,7 @@ export function EscrowForm({
       {error && <div className="error-banner" role="alert">{error}</div>}
 
       <div className="form-grid">
-        <div>
+        <div className="field-full">
           <label htmlFor="buyerAddress">Buyer address</label>
           <input
             id="buyerAddress"
@@ -189,7 +189,7 @@ export function EscrowForm({
             onChange={(e) => update("buyerAddress", e.target.value)}
           />
         </div>
-        <div>
+        <div className="field-full">
           <label htmlFor="sellerAddress">Seller address</label>
           <input
             id="sellerAddress"
@@ -198,7 +198,7 @@ export function EscrowForm({
             onChange={(e) => update("sellerAddress", e.target.value)}
           />
         </div>
-        <div>
+        <div className="field-full">
           <label htmlFor="arbiterAddress">Arbiter address</label>
           <input
             id="arbiterAddress"
@@ -219,8 +219,16 @@ export function EscrowForm({
             onChange={(e) => update("milestoneAmountAda", e.target.value)}
           />
         </div>
-        <div className="field-full">
+        <div>
           <label htmlFor="deadline">Refund deadline</label>
+          <input
+            id="deadline"
+            type="datetime-local"
+            value={form.deadline}
+            onChange={(e) => update("deadline", e.target.value)}
+          />
+        </div>
+        <div className="field-full">
           <div className="deadline-presets">
             {DEADLINE_PRESETS.map((preset) => (
               <button
@@ -239,12 +247,6 @@ export function EscrowForm({
               </button>
             ))}
           </div>
-          <input
-            id="deadline"
-            type="datetime-local"
-            value={form.deadline}
-            onChange={(e) => update("deadline", e.target.value)}
-          />
         </div>
       </div>
 
@@ -256,29 +258,28 @@ export function EscrowForm({
             <span className="cost-value">{adaNum.toLocaleString()} ADA</span>
           </div>
           <div className="cost-row">
-            <span className="cost-label">Cardano Plutus V3 Script Storage Reserve:</span>
+            <span className="cost-label">Cardano Script Storage Reserve:</span>
             <span className="cost-value">{minUtxoStorage.toFixed(1)} ADA</span>
           </div>
           <div className="cost-row">
-            <span className="cost-label">Estimated Preprod Network Gas Fee:</span>
+            <span className="cost-label">Estimated Network Fee:</span>
             <span className="cost-value">~{estimatedTxFee} ADA</span>
           </div>
           <div className="cost-row total-row">
-            <span className="cost-label">Total Buyer UTxO Obligation:</span>
+            <span className="cost-label">Total UTxO Obligation:</span>
             <span className="cost-value highlight">{totalAdaRequired} ADA</span>
           </div>
         </div>
       )}
 
-      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "1.25rem", padding: "0.65rem 0.85rem", background: "var(--surface-alt)", borderRadius: "8px", border: "1px solid var(--border)", fontSize: "0.78rem", color: "var(--text-muted)" }}>
-        <ShieldIcon width="16" height="16" color="var(--accent-purple)" />
-        <span>Non-custodial invariant: Funds can ONLY be disbursed by buyer signoff, arbiter decision, or post-deadline refund.</span>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "1rem", padding: "0.55rem 0.75rem", background: "var(--bg-inset)", borderRadius: "var(--radius-xs)", border: "1px solid var(--border-subtle)", fontSize: "0.74rem", color: "var(--text-muted)" }}>
+        <ShieldIcon width="14" height="14" color="#60a5fa" />
+        <span>Non-custodial: Funds can only be settled by mutual signoff or arbiter ruling.</span>
       </div>
 
-      <button className="primary" type="submit" disabled={submitting} style={{ marginTop: "1.25rem", width: "100%", padding: "0.85rem" }}>
+      <button className="primary" type="submit" disabled={submitting} style={{ marginTop: "1rem", width: "100%", padding: "0.65rem" }}>
         {submitting ? "Locking funds…" : "Lock funds in escrow"}
       </button>
     </form>
   );
 }
-

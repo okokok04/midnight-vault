@@ -43,18 +43,18 @@ export function App() {
     <>
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} wallet={wallet} />
 
-      {/* Master Hero Banner (shown on main interactive tabs) */}
+      {/* Protocol Command Deck */}
       {(activeTab === "midnight" || activeTab === "cardano") && (
         <HeroBanner activeTab={activeTab} setActiveTab={setActiveTab} />
       )}
 
-      {/* Segmented Master Navigation Tabs */}
+      {/* Linear-Style Segmented Navigation Tabstrip */}
       <nav className="nav-tabs" aria-label="Network DApp Tabs">
         <button
           className={`nav-tab-button ${activeTab === "midnight" ? "active" : ""}`}
           onClick={() => setActiveTab("midnight")}
         >
-          <SparklesIcon width="16" height="16" />
+          <SparklesIcon width="15" height="15" />
           <span>Midnight Privacy Escrow (Compact ZK)</span>
         </button>
 
@@ -62,7 +62,7 @@ export function App() {
           className={`nav-tab-button ${activeTab === "survey" ? "active" : ""}`}
           onClick={() => setActiveTab("survey")}
         >
-          <VoteIcon width="16" height="16" />
+          <VoteIcon width="15" height="15" />
           <span>Anonymous ZK Survey</span>
         </button>
 
@@ -70,7 +70,7 @@ export function App() {
           className={`nav-tab-button ${activeTab === "cardano" ? "active" : ""}`}
           onClick={() => setActiveTab("cardano")}
         >
-          <ShieldIcon width="16" height="16" />
+          <ShieldIcon width="15" height="15" />
           <span>Cardano Preprod Escrow (Aiken)</span>
         </button>
 
@@ -78,7 +78,7 @@ export function App() {
           className={`nav-tab-button ${activeTab === "analytics" ? "active" : ""}`}
           onClick={() => setActiveTab("analytics")}
         >
-          <BarChartIcon width="16" height="16" />
+          <BarChartIcon width="15" height="15" />
           <span>Protocol Analytics</span>
         </button>
 
@@ -86,7 +86,7 @@ export function App() {
           className={`nav-tab-button ${activeTab === "docs" ? "active" : ""}`}
           onClick={() => setActiveTab("docs")}
         >
-          <LayersIcon width="16" height="16" />
+          <LayersIcon width="15" height="15" />
           <span>Docs &amp; Specs</span>
         </button>
 
@@ -94,7 +94,7 @@ export function App() {
           className={`nav-tab-button ${activeTab === "about" ? "active" : ""}`}
           onClick={() => setActiveTab("about")}
         >
-          <ShieldIcon width="16" height="16" />
+          <ShieldIcon width="15" height="15" />
           <span>About &amp; Security</span>
         </button>
       </nav>
@@ -125,40 +125,48 @@ export function App() {
 
             {error && <div className="error-banner" role="alert">{error}</div>}
 
-            <EscrowForm
-              onCreate={createEscrow}
-              defaultBuyerAddress={wallet.address ?? undefined}
-            />
+            <div className="workspace-split">
+              {/* Left Column: Escrow Creation Console & Feedback Form */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                <EscrowForm
+                  onCreate={createEscrow}
+                  defaultBuyerAddress={wallet.address ?? undefined}
+                />
 
-            <section style={{ marginTop: "2.5rem" }}>
-              <h2 className="section-title">
-                <ShieldIcon width="20" height="20" />
-                <span>Active Milestone Escrows</span>
-              </h2>
-              <EscrowList
-                escrows={escrows}
-                loading={loading}
-                onRelease={releaseEscrow}
-                onRefund={refundEscrow}
-                onResolve={resolveEscrow}
-              />
-            </section>
+                <div>
+                  <FeedbackForm onSubmit={submitFeedback} />
+                </div>
+              </div>
 
-            <section style={{ marginTop: "2.5rem" }}>
-              <FeedbackForm onSubmit={submitFeedback} />
-            </section>
+              {/* Right Column: Active Escrow Ledger & Recent Feedback */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                <section>
+                  <h2 className="section-title">
+                    <ShieldIcon width="18" height="18" />
+                    <span>Active Milestone Escrows</span>
+                  </h2>
+                  <EscrowList
+                    escrows={escrows}
+                    loading={loading}
+                    onRelease={releaseEscrow}
+                    onRefund={refundEscrow}
+                    onResolve={resolveEscrow}
+                  />
+                </section>
 
-            <section style={{ marginTop: "2.5rem" }}>
-              <h2 className="section-title">
-                <span>Recent Feedback</span>
-              </h2>
-              <FeedbackList
-                feedback={feedback}
-                loading={feedbackLoading}
-                onUpdateStatus={updateStatus}
-                onRemove={removeFeedback}
-              />
-            </section>
+                <section>
+                  <h2 className="section-title">
+                    <span>Recent Feedback</span>
+                  </h2>
+                  <FeedbackList
+                    feedback={feedback}
+                    loading={feedbackLoading}
+                    onUpdateStatus={updateStatus}
+                    onRemove={removeFeedback}
+                  />
+                </section>
+              </div>
+            </div>
           </>
         )}
       </main>
