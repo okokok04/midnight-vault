@@ -1,69 +1,45 @@
-import { useState, useCallback } from 'react';
-import { generateRandomSecret, deriveMidnightPublicKey } from '../lib/midnight-crypto';
+import { useState } from 'react';
+import { useMidnightFeedback } from '../hooks/useMidnightFeedback';
 import { CopyButton } from './CopyButton';
-import { VoteIcon, RefreshCwIcon } from './Icons';
-
-export interface AnonymousFeedbackState {
-  totalResponses: number;
-  totalRatingSum: number;
-  lastNullifier: string;
-  surveyTopic: string;
-}
+import { VoteIcon, RefreshCwIcon, CheckCircleIcon, ExternalLinkIcon } from './Icons';
+import { EXPLORER_URLS } from '../lib/midnight-indexer';
 
 export function MidnightFeedbackPanel() {
-  const [participantSecret, setParticipantSecret] = useState(() => generateRandomSecret());
+  const {
+    participantSecret,
+    currentNullifier,
+    isConsumed,
+    feedbackStats,
+    submitting,
+    error,
+    zkLogs,
+    updateParticipantSecret,
+    regenerateSecret,
+    submitRating,
+  } = useMidnightFeedback();
+
   const [rating, setRating] = useState<number>(5);
   const [category, setCategory] = useState<string>('WORK_QUALITY');
-  const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-  const [feedbackStats, setFeedbackStats] = useState<AnonymousFeedbackState>({
-    totalResponses: 12,
-    totalRatingSum: 58,
-    lastNullifier: '0xnullifier_7f2b8c9d10e4a5b6c7d8e9f0123456789abcdef0123456789abcdef01234',
-    surveyTopic: '0x5374656c6c61725661756c745f467265656c616e63655f526174696e675f3236',
-  });
-
-  const [zkLogs, setZkLogs] = useState<string[]>([]);
-
-  const handleRegenerateSecret = useCallback(() => {
-    setParticipantSecret(generateRandomSecret());
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
     setSuccessMsg(null);
 
     try {
-      // Simulate Compact ZK Circuit proof generation for submitRating()
-      await new Promise((resolve) => setTimeout(resolve, 700));
-
-      const nullifierHash = await deriveMidnightPublicKey(participantSecret + '_nullifier_' + feedbackStats.surveyTopic);
-
-      setFeedbackStats((prev) => ({
-        ...prev,
-        totalResponses: prev.totalResponses + 1,
-        totalRatingSum: prev.totalRatingSum + rating,
-        lastNullifier: nullifierHash,
-      }));
-
-      const logEntry = `[${new Date().toLocaleTimeString()}] ✅ circuit submitRating(${rating}★, ${category}) -> ZK Proof verified. Nullifier ${nullifierHash.slice(0, 16)}... registered on-chain. Participant secret retained in client memory.`;
-      setZkLogs((prev) => [logEntry, ...prev]);
-
-      setSuccessMsg(`Anonymous feedback (${rating} Stars, ${category}) submitted successfully with Zero-Knowledge verification!`);
-      // Regenerate fresh secret for next review
-      setParticipantSecret(generateRandomSecret());
+      const { nullifier, txHash } = await submitRating(rating, category);
+      setSuccessMsg(
+        `Anonymous feedback (${rating} Stars, ${category}) confirmed on-chain! Tx: ${txHash.slice(0, 14)}... Nullifier: ${nullifier.slice(0, 14)}...`
+      );
     } catch {
-      // Handled
-    } finally {
-      setSubmitting(false);
+      // Error handled via hook
     }
   };
 
-  const averageRating = feedbackStats.totalResponses > 0
-    ? (feedbackStats.totalRatingSum / feedbackStats.totalResponses).toFixed(1)
-    : '0.0';
+  const averageRating =
+    feedbackStats.totalResponses > 0
+      ? (feedbackStats.totalRatingSum / feedbackStats.totalResponses).toFixed(1)
+      : '0.0';
 
   return (
     <div className="card" style={{ marginTop: '1.5rem' }} data-testid="midnight-feedback-panel">
@@ -90,18 +66,31 @@ export function MidnightFeedbackPanel() {
         </div>
 
         <div className="stats-tile">
-          <div className="stats-tile-value" style={{ fontVariantNumeric: 'tabular-nums' }}>{feedbackStats.totalResponses}</div>
+          <div className="stats-tile-value" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            {feedbackStats.totalResponses}
+          </div>
           <div className="stats-tile-label">Verified Anonymous Responses</div>
         </div>
 
         <div className="stats-tile">
-          <div className="stats-tile-value" style={{ fontVariantNumeric: 'tabular-nums' }}>{feedbackStats.totalRatingSum}</div>
+          <div className="stats-tile-value" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            {feedbackStats.totalRatingSum}
+          </div>
           <div className="stats-tile-label">Total Rating Points Tally</div>
         </div>
       </div>
 
       {/* Form Submission */}
-      <form onSubmit={handleSubmit} style={{ marginTop: '1.25rem', background: 'var(--surface-alt)', padding: '1.25rem 1.4rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          marginTop: '1.25rem',
+          background: 'var(--surface-alt)',
+          padding: '1.25rem 1.4rem',
+          borderRadius: '12px',
+          border: '1px solid var(--border)',
+        }}
+      >
         <div className="form-grid" style={{ marginBottom: '1rem' }}>
           <div>
             <label htmlFor="survey-rating-select">Rating (1 to 5 Stars)</label>
@@ -142,18 +131,25 @@ export function MidnightFeedbackPanel() {
         </div>
 
         <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="participant-secret-input">Participant Secret Witness (ZK Token)</label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <label htmlFor="participant-secret-input">Participant Secret Witness (ZK Token)</label>
+            {isConsumed && (
+              <span style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 600 }}>
+                ⚠️ Nullifier Consumed (Vote already cast)
+              </span>
+            )}
+          </div>
           <div style={{ display: 'flex', gap: '0.45rem' }}>
             <input
               id="participant-secret-input"
               type="password"
               value={participantSecret}
-              onChange={(e) => setParticipantSecret(e.target.value)}
+              onChange={(e) => updateParticipantSecret(e.target.value)}
               style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem' }}
             />
             <button
               type="button"
-              onClick={handleRegenerateSecret}
+              onClick={regenerateSecret}
               title="Generate fresh secret"
               style={{ fontSize: '0.78rem', whiteSpace: 'nowrap', padding: '0.45rem 0.8rem' }}
             >
@@ -166,34 +162,89 @@ export function MidnightFeedbackPanel() {
           </p>
         </div>
 
+        {error && (
+          <div className="error-banner" style={{ marginBottom: '1rem' }}>
+            {error}
+          </div>
+        )}
+
         {successMsg && (
-          <div style={{ background: 'var(--success-bg)', border: '1px solid var(--success-border)', color: '#34d399', padding: '0.75rem 1rem', borderRadius: '8px', fontSize: '0.85rem', marginBottom: '1rem' }}>
+          <div
+            style={{
+              background: 'var(--success-bg)',
+              border: '1px solid var(--success-border)',
+              color: '#34d399',
+              padding: '0.75rem 1rem',
+              borderRadius: '8px',
+              fontSize: '0.85rem',
+              marginBottom: '1rem',
+            }}
+          >
             {successMsg}
           </div>
         )}
 
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || isConsumed}
           className="primary"
           style={{ width: '100%', padding: '0.7rem' }}
         >
-          {submitting ? 'Generating Zero-Knowledge Proof...' : 'Submit Anonymous Rating via ZK Circuit'}
+          {submitting
+            ? 'Generating Zero-Knowledge Proof & Submitting Tx...'
+            : isConsumed
+            ? 'Token Already Used (Generate Fresh Token Above)'
+            : 'Submit Anonymous Rating via ZK Circuit'}
         </button>
       </form>
 
       {/* Nullifier & State Inspector */}
-      <div style={{ marginTop: '1.25rem', background: 'var(--surface-alt)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
-        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.25rem' }}>Latest On-Chain Nullifier (Anti-Double-Vote Hash)</div>
+      <div
+        style={{
+          marginTop: '1.25rem',
+          background: 'var(--surface-alt)',
+          padding: '1rem',
+          borderRadius: '10px',
+          border: '1px solid var(--border)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            Current Derived Nullifier (Anti-Double-Vote Hash)
+          </span>
+          <span style={{ fontSize: '0.75rem', color: isConsumed ? '#ef4444' : '#10b981' }}>
+            {isConsumed ? '● USED' : '● UNUSED / READY'}
+          </span>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          <code className="hash" style={{ fontSize: '0.76rem', wordBreak: 'break-all', flex: 1 }}>{feedbackStats.lastNullifier}</code>
-          <CopyButton value={feedbackStats.lastNullifier} />
+          <code className="hash" style={{ fontSize: '0.76rem', wordBreak: 'break-all', flex: 1 }}>
+            {currentNullifier || feedbackStats.lastNullifier}
+          </code>
+          <CopyButton value={currentNullifier || feedbackStats.lastNullifier} />
         </div>
       </div>
 
+      {feedbackStats.consumedNullifiers.length > 0 && (
+        <div style={{ marginTop: '1rem', background: 'var(--surface-alt)', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.4rem' }}>
+            Registered On-Chain Nullifier Registry ({feedbackStats.consumedNullifiers.length} consumed)
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+            {feedbackStats.consumedNullifiers.slice(0, 3).map((nullifier, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.74rem' }}>
+                <CheckCircleIcon width="12" height="12" color="var(--success)" />
+                <code className="hash" style={{ fontSize: '0.74rem' }}>{nullifier.slice(0, 24)}...{nullifier.slice(-8)}</code>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {zkLogs.length > 0 && (
         <div style={{ marginTop: '1.25rem' }}>
-          <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.86rem', color: 'var(--text-secondary)' }}>Recent ZK Circuit Invocations</h4>
+          <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.86rem', color: 'var(--text-secondary)' }}>
+            Recent ZK Circuit Invocations & Verified Proofs
+          </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             {zkLogs.map((log, i) => (
               <div key={i} className="trace-item" style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
@@ -203,6 +254,23 @@ export function MidnightFeedbackPanel() {
           </div>
         </div>
       )}
+
+      {/* Explorer Verification Link */}
+      <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <CheckCircleIcon width="14" height="14" color="var(--success)" />
+          <span>Anonymous Feedback Protocol Deployed on Midnight Preprod</span>
+        </div>
+        <a
+          href={EXPLORER_URLS.preprod}
+          target="_blank"
+          rel="noreferrer"
+          style={{ fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+        >
+          View Survey Nullifiers on Indexer <ExternalLinkIcon width="12" height="12" />
+        </a>
+      </div>
     </div>
   );
 }
+

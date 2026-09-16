@@ -1,8 +1,17 @@
-export type MidnightNetwork = 'preprod' | 'preview';
+export type MidnightNetwork = 'preprod' | 'preview' | 'undeployed';
 
 export interface MidnightAddressInfo {
   unshieldedAddress: string;
   shieldedAddress?: string;
+}
+
+export interface MidnightTransactionReceipt {
+  txHash: string;
+  blockHeight?: number;
+  status: 'SUBMITTED' | 'CONFIRMED' | 'FAILED';
+  circuitName: string;
+  nullifier?: string;
+  timestamp: string;
 }
 
 export interface MidnightLaceApi {
@@ -10,7 +19,7 @@ export interface MidnightLaceApi {
   getUnshieldedAddress(): Promise<string>;
   getShieldedAddress(): Promise<string | undefined>;
   getBalance(): Promise<{ unshielded: bigint; shielded: bigint }>;
-  proveTx?(tx: unknown): Promise<unknown>;
+  proveTx?(tx: unknown): Promise<{ proof: Uint8Array; publicOutputs: unknown }>;
   submitTx?(tx: unknown): Promise<string>;
 }
 
@@ -37,13 +46,39 @@ export interface MidnightPrivateState {
   derivedPublicKey: string;
 }
 
+export interface FeedbackPrivateWitness {
+  participantSecret: string;
+  derivedNullifier: string;
+}
+
 export interface CircuitProofTrace {
-  circuitName: 'deposit' | 'release' | 'refund' | 'resolve' | 'publicKeyOf';
+  circuitName: 'deposit' | 'release' | 'refund' | 'resolve' | 'publicKeyOf' | 'submitRating';
   timestamp: string;
-  privateWitnessUsed: string; // Opaque indicator that secret was proven
+  privateWitnessUsed: string;
   zkProofGenerated: boolean;
   zkProofHash: string;
+  txHash?: string;
   publicOutputs: Record<string, string | number | boolean>;
-  txStatus: 'PROVEN' | 'SUBMITTED' | 'CONFIRMED';
+  txStatus: 'PROVEN' | 'SUBMITTED' | 'CONFIRMED' | 'FAILED';
   preprodContractAddress: string;
 }
+
+export interface OnChainEscrowState {
+  buyerPk: string;
+  sellerPk: string;
+  arbiterPk: string;
+  milestoneAmount: bigint;
+  state: 'AWAITING_DEPOSIT' | 'LOCKED' | 'RELEASED' | 'REFUNDED' | 'RESOLVED';
+  contractAddress: string;
+  lastUpdatedBlock?: number;
+}
+
+export interface OnChainFeedbackState {
+  totalResponses: number;
+  totalRatingSum: number;
+  lastNullifier: string;
+  surveyTopic: string;
+  contractAddress: string;
+  consumedNullifiers: string[];
+}
+

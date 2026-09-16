@@ -6,7 +6,9 @@
   "scripts": {
     "wallet:new": "tsx src/new-wallet.ts",
     "wallet:balance": "tsx src/wallet-balance.ts",
-    "deploy": "tsx src/deploy.ts"
+    "deploy": "tsx src/deploy.ts",
+    "verify": "tsx src/verify-contract.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "^0.16.0",

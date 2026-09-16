@@ -187,6 +187,13 @@ export function MidnightPrivacyInspector({
                     <code className="hash" style={{ fontSize: '0.74rem' }}>{trace.zkProofHash}</code>
                   </div>
                 )}
+                {trace.txHash && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.25rem' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>Tx Hash:</span>
+                    <code className="hash" style={{ fontSize: '0.74rem' }}>{trace.txHash}</code>
+                    <CopyButton value={trace.txHash} />
+                  </div>
+                )}
               </div>
             ))}
           </div>

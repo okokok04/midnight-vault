@@ -94,3 +94,21 @@ describe('MidnightEscrowPanel', () => {
     });
   });
 });
+
+describe('MidnightFeedbackPanel', () => {
+  it('renders feedback protocol and allows submitting rating with nullifier tracking', async () => {
+    const { MidnightFeedbackPanel } = await import('./MidnightFeedbackPanel');
+    render(<MidnightFeedbackPanel />);
+
+    expect(screen.getByText(/Anonymous Feedback & Survey Protocol/i)).toBeInTheDocument();
+    expect(screen.getByText(/Submit Anonymous Rating via ZK Circuit/i)).toBeInTheDocument();
+
+    const submitBtn = screen.getByText(/Submit Anonymous Rating via ZK Circuit/i);
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Anonymous feedback \(5 Stars, WORK_QUALITY\) confirmed on-chain!/i)).toBeInTheDocument();
+    });
+  });
+});
+
