@@ -113,6 +113,43 @@ The video demonstrates the complete end-to-end user and cryptographic flow on Mi
    - Contract verifies proof of authorized release without leaking counterparties' off-chain identity.
    - Escrow state updates to `RELEASED` with the seller payout confirmed on-chain.
 
+## Level 5 submission status
+
+**Not submission-ready.** No verified human-user register has been supplied.
+
+- **Feedback workbook (owner-supplied):** [StellarVault Feedback](https://docs.google.com/spreadsheets/d/1tlwCfxwGehdR3X6D48yY-w0_ZL513PTC5X9igqzuSs0/edit?usp=sharing).
+- **Feedback responses:** [Câu trả lời biểu mẫu 1](https://docs.google.com/spreadsheets/d/1tlwCfxwGehdR3X6D48yY-w0_ZL513PTC5X9igqzuSs0/edit#gid=1403626924). Drive permissions confirm anyone with the link can view.
+- **Excel export:** [Download the supplied feedback workbook (.xlsx)](docs/stellarvault-feedback.xlsx), exported on 2026-09-21. This preserves the supplied workbook without verifying response authenticity or transaction attribution.
+- **Google Form responder URL:** pending. Both supplied URLs point to the same Google Sheet, not to a Google Form. The inspected response headers include Name, Email, Wallet Address and five feedback questions, but no Product Rating column.
+- **Evidence caveat:** inspected response rows use `SYN-001` / `SYN-002` and addresses from the project's synthetic load-test dataset. They are not counted as verified real users. The wallet header says “Stellar wallet address” while the inspected addresses are Cardano testnet addresses; the form's network label needs correction.
+- **50+ new active Preprod/Preview users:** unverified. The 70 recorded load-test wallets are synthetic and do not count as real users.
+- **70+ new mainnet users / mainnet transactions:** unverified. The supplied checklist includes this alongside the 50+ testnet target; program clarification remains necessary.
+- **Production readiness:** unverified. Cardano Preprod activity does not prove Midnight deployment. Local SHA-256 proof/transaction labels in the Midnight frontend are not independently confirmed on-chain proof.
+- **Commits:** 123 local commits at `513dc04`; count alone does not certify meaningfulness.
+- **Social:** [X @manh71546](https://x.com/manh71546). Published update-post permalinks, dated growth evidence and additional handles are unverified.
+
+### Users Onboarded
+
+Awaiting genuine responses and consent to publish the listed information. Link transaction evidence by User ID in the Sheet. Do not put synthetic wallets in this table.
+
+| User ID | Name | Email | Wallet Address | Feedback Summary |
+| --- | --- | --- | --- | --- |
+
+### Feedback Implementation
+
+Awaiting attributable original responses and verified implementation links.
+
+| User ID | Name | Email | Wallet Address | Feedback Summary | Improvement Made | Git Commit ID |
+| --- | --- | --- | --- | --- | --- | --- |
+
+### Improvement Summary
+
+The repository documents a mobile deadline-picker complaint in [FEEDBACK.md](docs/FEEDBACK.md).
+Quick-select presets were implemented in [d3a2138](https://github.com/okokok04/stellarvault/commit/d3a2138f47c1f585e6a8fa9b96344d6d4cfcdaf1).
+The implementation commit exists locally; the original response and tester name/email/wallet remain unverified. This is not yet a completed user-attributed implementation entry.
+
+See [the Level 5 checklist](docs/LEVEL5_SUBMISSION.md).
+
 ## Users & feedback
 
 The dashboard has an in-app feedback form (rating + message, optional
