@@ -119,7 +119,6 @@ The video demonstrates the complete end-to-end user and cryptographic flow on Mi
 - **Google Form responder URL:** https://docs.google.com/forms/d/1RAHX5e2-kEvtLXHtP2mJTvFexkluR0kaSQXcMVkiRcU/edit
 - **70+ new mainnet users / mainnet transactions:**  The supplied checklist includes this alongside the 70+ testnet target; program clarification remains necessary.
 - **Production readiness:** Local SHA-256 proof/transaction labels in the Midnight frontend are not independently confirmed on-chain proof.
-- **Commits:** 123 local commits at `513dc04`; count alone does not certify meaningfulness.
 - **Social:** [X @manh71546](https://x.com/manh71546). Published update-post permalinks, dated growth evidence and additional handles are unverified.
 
 ### Users Onboarded
