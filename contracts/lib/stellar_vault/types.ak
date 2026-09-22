@@ -28,4 +28,3 @@ pub type EscrowRedeemer {
   /// Arbiter settles dispute with a split payout between seller and buyer.
   Split { pay_seller_amount: Int, pay_buyer_amount: Int }
 }
-

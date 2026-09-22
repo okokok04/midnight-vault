@@ -80,4 +80,3 @@ validator escrow {
     fail
   }
 }
-
