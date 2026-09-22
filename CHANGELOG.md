@@ -4,6 +4,13 @@ Keeping this in sync with the product is itself part of the Level 5
 requirement ("keeping docs in sync with a changing product") — update
 it in the same commit/PR as the change it describes, not after.
 
+## CI/CD Pipeline & Smart Contract Improvements
+
+- **Cardano Aiken Smart Contract Testing Suite**: Added exhaustive unit test coverage in `contracts/validators/escrow.ak` covering all on-chain spend paths (`Release`, `Refund`, `Cancel`, `Resolve`, `Split`) and failure conditions (unauthorized signatories, insufficient payout, invalid split sum), plus time-range tests for `deadline_passed` in `contracts/lib/stellar_vault/utils.ak`.
+- **Midnight Compact Contract Test Expansion**: Expanded Vitest suites in `contracts-midnight/escrow` (13 tests) and `contracts-midnight/feedback` (7 tests) verifying constructor party uniqueness, deposit idempotence, state machine transitions, and deterministic `nullifierOf` pure circuits.
+- **Automated GitHub Actions CI Matrix**: Upgraded `.github/workflows/ci.yml` to run 5 parallel automated jobs (`Contracts (Aiken)`, `Contracts (Midnight ZK - escrow)`, `Contracts (Midnight ZK - feedback)`, `Backend`, and `Frontend`).
+- **Plutus Blueprint Sync Verification**: Added automated `git diff --exit-code plutus.json` step ensuring the committed Plutus blueprint is always cryptographically synchronized with the Aiken validator source code.
+
 ## Level 7 / Midnight ZK Privacy DApps Release
 
 - **Midnight Compact Milestone Escrow**: Implemented in Compact (`0.23`) with ZK circuits (`deposit`, `release`, `refund`, `resolve`), deliberate `disclose()`, and `localSecretKey()` private witness.

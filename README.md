@@ -260,21 +260,23 @@ Full design rationale: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 ## Repository layout
 
 ```
-contracts/   Aiken validator: the on-chain, privacy-critical core
-backend/     Express API + Lucid off-chain transaction builders + feedback endpoint
-frontend/    Vite + React dashboard (wallet connect, escrow lifecycle, feedback UI)
-scripts/     Preprod deploy script + synthetic load-test wallet generator
-docs/        Architecture, setup, usage, feedback-loop, and synthetic-dataset docs
-demo/        Demo video script and X profile launch copy
+contracts/            Aiken Plutus Core validator + full spend path test suite
+contracts-midnight/   Midnight Compact ZK smart contracts (escrow & anonymous feedback)
+backend/              Express API + Lucid off-chain transaction builders + feedback endpoint
+frontend/             Vite + React dashboard (wallet connect, escrow lifecycle, feedback UI)
+scripts/              Preprod deploy script + synthetic load-test wallet generator
+docs/                 Architecture, setup, usage, feedback-loop, and synthetic-dataset docs
+demo/                 Demo video script and X profile launch copy
 ```
 
 ## Tech stack
 
-- **Smart contract**: [Aiken](https://aiken-lang.org) → Plutus V3
+- **Smart contracts**:
+  - **Cardano**: [Aiken](https://aiken-lang.org) → Plutus V3 Core
+  - **Midnight**: [Compact](https://docs.midnight.network/develop/reference/compact/) (`0.23`) Zero-Knowledge circuits
 - **Off-chain**: Node.js, TypeScript, Express, [Lucid Evolution](https://github.com/Anastasia-Labs/lucid-evolution), [Blockfrost](https://blockfrost.io)
-- **Frontend**: Vite, React, TypeScript, CIP-30 wallet connect
-- **CI/CD**: GitHub Actions (contract check/build, backend + frontend
-  lint/test/build, frontend deploy to GitHub Pages)
+- **Frontend**: Vite, React, TypeScript, CIP-30 Cardano & Midnight Lace DApp Connectors
+- **CI/CD**: GitHub Actions matrix pipeline running 5 parallel jobs (Aiken check/build & blueprint sync verification, Midnight Compact escrow & feedback test suites, backend test/lint/build, frontend test/build, and automated GitHub Pages deployment)
 
 ## Quick start
 
@@ -294,12 +296,14 @@ Using the dashboard and the raw REST API: [`docs/USAGE.md`](docs/USAGE.md).
 ## Testing
 
 ```sh
-cd contracts && aiken check      # validator unit tests
-cd backend    && npm test        # API + store tests (on-chain calls mocked)
-cd frontend   && npm test        # component tests
+cd contracts && aiken check                               # Aiken validator unit tests
+cd contracts-midnight/escrow && npm test                  # Midnight Compact escrow circuit tests
+cd contracts-midnight/feedback && npm test                # Midnight Compact anonymous feedback tests
+cd backend && npm test                                    # API + store tests (on-chain calls mocked)
+cd frontend && npm test                                   # Component + integration tests
 ```
 
-All three run in CI on every push/PR — see
+All 5 test suites run automatically in CI on every push and pull request — see
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## Roadmap

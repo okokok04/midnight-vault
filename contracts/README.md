@@ -36,9 +36,9 @@ runs on every push and pull request.
 interface contract `backend/` and `scripts/deploy-preprod.ts` read at
 runtime, and hosts like Render don't have Aiken installed to regenerate
 it. If you change any `.ak` file, re-run `aiken build` and commit the
-updated `plutus.json` — CI's "Build" step will fail the PR if you forget,
-since it fails on any diff-worthy compile error, but it does *not* check
-that the committed blueprint matches the source, so this is on you.
+updated `plutus.json` — CI's "Build" step now automatically runs
+`git diff --exit-code plutus.json` to verify that the committed blueprint
+matches the source code exactly.
 
 ## Design notes
 
