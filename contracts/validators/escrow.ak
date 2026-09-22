@@ -218,7 +218,7 @@ test escrow_spend_resolve_seller_success() {
 
   escrow.spend(
     Some(sample_datum()),
-    Resolve { pay_seller: true },
+    Resolve { pay_seller: True },
     sample_ref(),
     tx,
   )
@@ -234,7 +234,7 @@ test escrow_spend_resolve_buyer_success() {
 
   escrow.spend(
     Some(sample_datum()),
-    Resolve { pay_seller: false },
+    Resolve { pay_seller: False },
     sample_ref(),
     tx,
   )
@@ -250,7 +250,7 @@ test escrow_spend_resolve_fails_unauthorized() {
 
   !escrow.spend(
     Some(sample_datum()),
-    Resolve { pay_seller: true },
+    Resolve { pay_seller: True },
     sample_ref(),
     tx,
   )
