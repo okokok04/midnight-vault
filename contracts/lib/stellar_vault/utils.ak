@@ -72,3 +72,42 @@ test paid_at_least_matches_amount_and_recipient() {
     5_000_001,
   ) && !paid_at_least(outputs, #"11", 5_000_000)
 }
+
+test deadline_passed_when_valid_lower_bound() {
+  let deadline = 1_700_000_000
+  let tx_after =
+    Transaction {
+      ..transaction.placeholder,
+      validity_range: interval.after(1_700_000_001),
+    }
+  let tx_exact =
+    Transaction {
+      ..transaction.placeholder,
+      validity_range: interval.after(deadline),
+    }
+
+  deadline_passed(tx_after, deadline) && deadline_passed(tx_exact, deadline)
+}
+
+test deadline_passed_when_before_deadline() {
+  let deadline = 1_700_000_000
+  let tx_before =
+    Transaction {
+      ..transaction.placeholder,
+      validity_range: interval.after(1_699_999_999),
+    }
+
+  !deadline_passed(tx_before, deadline)
+}
+
+test deadline_passed_when_unbounded() {
+  let deadline = 1_700_000_000
+  let tx_unbounded =
+    Transaction {
+      ..transaction.placeholder,
+      validity_range: interval.everything,
+    }
+
+  !deadline_passed(tx_unbounded, deadline)
+}
+

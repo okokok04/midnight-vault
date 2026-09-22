@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { FeedbackSimulator } from './feedback-simulator.js';
-import { FeedbackCategory } from '../../managed/feedback/contract/index.js';
+import { FeedbackCategory, pureCircuits } from '../../managed/feedback/contract/index.js';
 
 const topic = new Uint8Array(32).fill(1);
+const otherTopic = new Uint8Array(32).fill(2);
 const aliceSecret = new Uint8Array(32).fill(10);
 const bobSecret = new Uint8Array(32).fill(20);
 const charlieSecret = new Uint8Array(32).fill(30);
@@ -73,4 +74,23 @@ describe('StellarVault Anonymous Feedback Contract', () => {
 
     expect(aliceNullifier).not.toEqual(bobNullifier);
   });
+
+  it('computes deterministic nullifiers via pure circuit matching on-chain submission', () => {
+    const sim = new FeedbackSimulator(topic, aliceSecret);
+    const computedAliceNullifier = pureCircuits.nullifierOf(aliceSecret, topic);
+
+    expect(computedAliceNullifier.length).toBe(32);
+
+    sim.asParticipant(aliceSecret);
+    sim.submitRating(5n, FeedbackCategory.COLLABORATION);
+    expect(sim.getLedger().lastNullifier).toEqual(computedAliceNullifier);
+  });
+
+  it('computes different nullifiers for different survey topics', () => {
+    const nullifierTopic1 = pureCircuits.nullifierOf(aliceSecret, topic);
+    const nullifierTopic2 = pureCircuits.nullifierOf(aliceSecret, otherTopic);
+
+    expect(nullifierTopic1).not.toEqual(nullifierTopic2);
+  });
 });
+

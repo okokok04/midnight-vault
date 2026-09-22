@@ -33,12 +33,43 @@ jobs:
       - name: Build (emit plutus.json blueprint)
         run: aiken build
 
+      - name: Verify plutus.json blueprint matches source
+        run: git diff --exit-code plutus.json
+
       - name: Upload compiled blueprint
         uses: actions/upload-artifact@v4
         with:
           name: plutus-blueprint
           path: contracts/plutus.json
           if-no-files-found: error
+
+  contracts-midnight:
+    name: Contracts (Midnight ZK - ${{ matrix.contract }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        contract: [escrow, feedback]
+    defaults:
+      run:
+        working-directory: contracts-midnight/${{ matrix.contract }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: contracts-midnight/${{ matrix.contract }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check and build
+        run: npm run build
+
+      - name: Run unit & circuit simulator tests
+        run: npm test
 
   backend:
     name: Backend
@@ -95,3 +126,4 @@ jobs:
 
       - name: Build
         run: npm run build
+
