@@ -8,10 +8,11 @@ export const INDEXER_ENDPOINTS: Record<MidnightNetwork, string> = {
 };
 
 export const EXPLORER_URLS: Record<MidnightNetwork, string> = {
-  preprod: 'https://indexer.preprod.midnight.network',
-  preview: 'https://indexer.preview.midnight.network',
+  preprod: 'https://indexer.preprod.midnight.network/',
+  preview: 'https://indexer.preview.midnight.network/',
   undeployed: 'http://localhost:8088',
 };
+
 
 export interface GraphQLContractStateResponse {
   data?: {

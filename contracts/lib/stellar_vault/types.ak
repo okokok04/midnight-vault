@@ -15,12 +15,17 @@ pub type EscrowDatum {
   deadline: Int,
 }
 
-/// The three ways funds locked in an escrow UTxO can move.
+/// The ways funds locked in an escrow UTxO can move.
 pub type EscrowRedeemer {
   /// Buyer signs off that the milestone was delivered; seller is paid.
   Release
   /// Buyer reclaims funds once the deadline has passed with no release.
   Refund
+  /// Seller consents to cancel and refunds the buyer early before deadline.
+  Cancel
   /// Arbiter breaks a deadlock and directs funds to one side.
   Resolve { pay_seller: Bool }
+  /// Arbiter settles dispute with a split payout between seller and buyer.
+  Split { pay_seller_amount: Int, pay_buyer_amount: Int }
 }
+

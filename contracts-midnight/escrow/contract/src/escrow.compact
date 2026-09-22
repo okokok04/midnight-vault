@@ -16,6 +16,7 @@ export enum EscrowState {
   LOCKED,
   RELEASED,
   REFUNDED,
+  CANCELLED,
   RESOLVED
 }
 
@@ -101,7 +102,25 @@ export circuit refund(_buyerAddress: UserAddress): [] {
   state = EscrowState.REFUNDED;
 }
 
-// Arbiter breaks a deadlock, directing funds to either side so an
+// Seller consents to refund buyer early before dispute/deadline if unable to fulfill.
+export circuit cancel(_buyerAddress: UserAddress): [] {
+  const pubKey = derivePublicKey(localSecretKey());
+  assert(pubKey == seller, "Only the seller can consent to cancel and refund early");
+  assert(state == EscrowState.LOCKED, "Escrow is not in a cancellable state");
+  assert(
+    unshieldedBalanceGte(nativeToken(), milestoneAmount as Uint<128>),
+    "Contract balance is lower than the milestone amount"
+  );
+
+  sendUnshielded(
+    nativeToken(),
+    milestoneAmount as Uint<128>,
+    right<ContractAddress, UserAddress>(disclose(_buyerAddress))
+  );
+  state = EscrowState.CANCELLED;
+}
+
+// Arbiter breaks a deadlock, directing funds in full to either side so an
 // escrow is never stuck forever.
 export circuit resolve(
   paySeller: Boolean,
@@ -123,6 +142,28 @@ export circuit resolve(
   state = EscrowState.RESOLVED;
 }
 
+// Arbiter settles a partial delivery dispute by splitting funds between seller and buyer.
+export circuit resolveSplit(
+  sellerAmount: Uint<64>,
+  buyerAmount: Uint<64>,
+  _sellerAddress: UserAddress,
+  _buyerAddress: UserAddress
+): [] {
+  const pubKey = derivePublicKey(localSecretKey());
+  assert(pubKey == arbiter, "Only the arbiter can resolve a dispute");
+  assert(state == EscrowState.LOCKED, "Escrow is not in a resolvable state");
+  assert(sellerAmount > 0 && buyerAmount > 0, "Split amounts must be positive");
+  assert((sellerAmount + buyerAmount) == milestoneAmount, "Split sum must equal total milestone amount");
+  assert(
+    unshieldedBalanceGte(nativeToken(), milestoneAmount as Uint<128>),
+    "Contract balance is lower than the milestone amount"
+  );
+
+  sendUnshielded(nativeToken(), sellerAmount as Uint<128>, right<ContractAddress, UserAddress>(disclose(_sellerAddress)));
+  sendUnshielded(nativeToken(), buyerAmount as Uint<128>, right<ContractAddress, UserAddress>(disclose(_buyerAddress)));
+  state = EscrowState.RESOLVED;
+}
+
 circuit derivePublicKey(secret: Bytes<32>): Bytes<32> {
   return persistentHash<Vector<2, Bytes<32>>>([pad(32, "stellarvault:pk:"), secret]);
 }
@@ -135,3 +176,4 @@ circuit derivePublicKey(secret: Bytes<32>): Bytes<32> {
 export pure circuit publicKeyOf(secret: Bytes<32>): Bytes<32> {
   return derivePublicKey(secret);
 }
+
