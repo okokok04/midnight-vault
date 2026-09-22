@@ -24,6 +24,9 @@ jobs:
         with:
           version: v1.1.9
 
+      - name: Format Aiken code
+        run: aiken fmt
+
       - name: Check formatting
         run: aiken fmt --check
 

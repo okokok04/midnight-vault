@@ -110,4 +110,3 @@ test deadline_passed_when_unbounded() {
 
   !deadline_passed(tx_unbounded, deadline)
 }
-

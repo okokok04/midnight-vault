@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "compact": "compact compile contract/src/escrow.compact contract/managed/escrow",
-    "test": "vitest run",
+    "test": "vitest run contract/src/test",
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {

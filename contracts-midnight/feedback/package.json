@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "compact": "compact compile contract/src/feedback.compact contract/managed/feedback",
-    "test": "vitest run",
+    "test": "vitest run contract/src/test",
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
