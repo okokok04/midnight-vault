@@ -17,7 +17,7 @@ export function MidnightEscrowPanel() {
     updateSecretKey,
     regenerateSecret,
     callCircuit,
-  } = useMidnightContract();
+  } = useMidnightContract(wallet.laceApi);
 
   return (
     <div className="midnight-escrow-panel" data-testid="midnight-escrow-panel">

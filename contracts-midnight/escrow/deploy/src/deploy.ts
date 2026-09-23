@@ -67,47 +67,46 @@ async function main() {
   console.log(`- Seller PK Hash: 0x${Buffer.from(sellerBytes).toString('hex').slice(0, 16)}...`);
   console.log(`- Arbiter PK Hash: 0x${Buffer.from(arbiterBytes).toString('hex').slice(0, 16)}...`);
 
-  let deployedContractAddress = '0x42f89c09c319b9df19bb23dae267104b205312f275e771e7a6858066bb739ae0';
-  let txHash = '0x7e8b9a0123456789abcdef0123456789abcdef0123456789abcdef0123456789';
-  let blockHeight = 142890;
-
   if (!dryRun) {
-    try {
-      console.log('\n[3/4] Initiating authenticated deployContract() on Midnight Preprod...');
-      const deployed = await deployContract(providers, {
+    console.log('\n[3/4] Initiating authenticated deployContract() on Midnight Preprod...');
+    const deployed = await deployContract(providers, {
+      contract: new Contract(witnesses),
+      compiledContract: {
         contract: new Contract(witnesses),
-        compiledContract: {
-          contract: new Contract(witnesses),
-          keys: path.join(MANAGED_PATH, 'keys'),
-          zkir: path.join(MANAGED_PATH, 'zkir'),
-        } as any,
-        initialPrivateState: createEscrowPrivateState(buyerSecret),
-        args: [sellerBytes, arbiterBytes, milestoneAmount],
-        privateStateId: 'escrowPrivateState',
-      } as any);
+        keys: path.join(MANAGED_PATH, 'keys'),
+        zkir: path.join(MANAGED_PATH, 'zkir'),
+      } as any,
+      initialPrivateState: createEscrowPrivateState(buyerSecret),
+      args: [sellerBytes, arbiterBytes, milestoneAmount],
+      privateStateId: 'escrowPrivateState',
+    } as any);
 
-      deployedContractAddress = (deployed as any).deployTxData?.public?.contractAddress ?? deployedContractAddress;
-      txHash = (deployed as any).deployTxData?.public?.txId ?? txHash;
-      blockHeight = (deployed as any).deployTxData?.public?.blockHeight ?? blockHeight;
-      console.log(`\n✅ Deployed successfully! Contract Address: ${deployedContractAddress}`);
-    } catch (err) {
-      console.warn(`\n(i) deployContract live network execution: Proof server / live faucet requirement.`);
-      console.warn(`    Using confirmed Preprod deployment record: ${deployedContractAddress}`);
+    const deployedContractAddress = (deployed as any).deployTxData?.public?.contractAddress;
+    const txHash = (deployed as any).deployTxData?.public?.txId;
+    const blockHeight = (deployed as any).deployTxData?.public?.blockHeight;
+
+    if (!deployedContractAddress || !txHash) {
+      throw new Error(`Deployment completed without returning valid contractAddress or txId`);
     }
+
+    console.log(`\n✅ Deployed successfully! Contract Address: ${deployedContractAddress}`);
+    console.log(`Tx ID: ${txHash}, Block: ${blockHeight}`);
+
+    const receipt = {
+      network: env,
+      contractAddress: deployedContractAddress,
+      deployerAddress: state.address,
+      txHash,
+      blockHeight,
+      deployedAt: new Date().toISOString(),
+      verifierKeys: 'verified_compact_escrow_v0.23',
+    };
+
+    writeFileSync(DEPLOY_RECEIPT_PATH, JSON.stringify(receipt, null, 2));
+    console.log(`\n[4/4] Wrote deployment receipt to ${DEPLOY_RECEIPT_PATH}`);
+  } else {
+    console.log('\n[3/4] Dry-run verification complete. Skipping on-chain deployment.');
   }
-
-  const receipt = {
-    network: env,
-    contractAddress: deployedContractAddress,
-    deployerAddress: state.address,
-    txHash,
-    blockHeight,
-    deployedAt: new Date().toISOString(),
-    verifierKeys: 'verified_compact_escrow_v0.23',
-  };
-
-  writeFileSync(DEPLOY_RECEIPT_PATH, JSON.stringify(receipt, null, 2));
-  console.log(`\n[4/4] Wrote deployment receipt to ${DEPLOY_RECEIPT_PATH}`);
 
   await wallet.close();
 }

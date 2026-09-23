@@ -10,7 +10,7 @@ export interface MidnightEscrowModel {
   sellerPk: string;
   arbiterPk: string;
   milestoneAmount: bigint;
-  state: 'AWAITING_DEPOSIT' | 'LOCKED' | 'RELEASED' | 'REFUNDED' | 'RESOLVED';
+  state: 'AWAITING_DEPOSIT' | 'LOCKED' | 'RELEASED' | 'REFUNDED' | 'CANCELLED' | 'RESOLVED';
   contractAddress?: string;
   lastUpdatedBlock?: number;
 }

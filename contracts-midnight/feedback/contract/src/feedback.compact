@@ -21,6 +21,7 @@ export enum FeedbackCategory {
 export ledger totalResponses: Uint<64>;
 export ledger totalRatingSum: Uint<64>;
 export ledger lastNullifier: Bytes<32>;
+export ledger nullifiers: Set<Bytes<32>>;
 export sealed ledger surveyTopic: Bytes<32>;
 
 // --- Private witness ---------------------------------------------------
@@ -33,10 +34,12 @@ constructor (_topic: Bytes<32>) {
   totalResponses = 0;
   totalRatingSum = 0;
   lastNullifier = pad(32, "");
+  nullifiers = default<Set<Bytes<32>>>();
 }
 
 // Submit anonymous rating (1-5) and feedback category.
 // Verifies eligibility and computes a unique nullifier without disclosing the rater.
+// Enforces cryptographic anti-double-submission by checking persistent nullifiers Set.
 export circuit submitRating(rating: Uint<8>, category: FeedbackCategory): [] {
   assert(rating >= 1 && rating <= 5, "Rating must be between 1 and 5");
 
@@ -46,10 +49,14 @@ export circuit submitRating(rating: Uint<8>, category: FeedbackCategory): [] {
   // Assert nullifier is non-zero to guarantee participant secret was provided
   assert(nullifier != pad(32, ""), "Invalid participant secret");
 
-  // State transitions: Increment public tallies
+  // Prevent double-submission on-chain
+  assert(!nullifiers.member(nullifier), "Nullifier has already been submitted for this survey");
+
+  // State transitions: Increment public tallies and record nullifier into set
   totalResponses = (totalResponses + 1) as Uint<64>;
   totalRatingSum = (totalRatingSum + (disclose(rating) as Uint<64>)) as Uint<64>;
   lastNullifier = disclose(nullifier);
+  nullifiers.insert(disclose(nullifier));
 }
 
 circuit computeNullifier(secret: Bytes<32>, topic: Bytes<32>): Bytes<32> {

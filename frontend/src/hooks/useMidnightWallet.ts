@@ -9,15 +9,11 @@ export interface MidnightWalletState {
   addresses: MidnightAddressInfo | null;
   balance: { unshielded: bigint; shielded: bigint } | null;
   error: string | null;
+  laceApi: MidnightLaceApi | null;
   connect: () => Promise<void>;
   disconnect: () => void;
   switchNetwork: (net: MidnightNetwork) => void;
 }
-
-const DEFAULT_SIMULATED_ADDRESS: MidnightAddressInfo = {
-  unshieldedAddress: 'mn_unshielded1qqg8u0k92u089w2345v8d7f6z4k9a2j4m7n5p',
-  shieldedAddress: 'mn_shielded1z9x8c7v6b5n4m3l2k1j0h9g8f7d6s5a4q3w2e1r',
-};
 
 export function useMidnightWallet(): MidnightWalletState {
   const [isLaceAvailable, setIsLaceAvailable] = useState(false);
@@ -26,14 +22,46 @@ export function useMidnightWallet(): MidnightWalletState {
   const [network, setNetwork] = useState<MidnightNetwork>('preprod');
   const [addresses, setAddresses] = useState<MidnightAddressInfo | null>(null);
   const [balance, setBalance] = useState<{ unshielded: bigint; shielded: bigint } | null>(null);
+  const [laceApi, setLaceApi] = useState<MidnightLaceApi | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const checkAvailability = () => {
+    let active = true;
+    const checkAvailability = async () => {
       const provider = window.midnight?.mnLace ?? window.midnight?.lace;
-      setIsLaceAvailable(Boolean(provider));
+      const available = Boolean(provider);
+      if (!active) return;
+      setIsLaceAvailable(available);
+
+      if (provider) {
+        try {
+          const enabled = await provider.isEnabled();
+          if (enabled && active) {
+            const api: MidnightLaceApi = await provider.enable();
+            if (!active) return;
+            const unshielded = await api.getUnshieldedAddress();
+            const shielded = await api.getShieldedAddress();
+            const bal = await api.getBalance();
+            const net = (await api.getNetworkId?.()) || 'preprod';
+
+            setLaceApi(api);
+            setAddresses({
+              unshieldedAddress: unshielded,
+              shieldedAddress: shielded,
+            });
+            setBalance(bal);
+            setNetwork(net as MidnightNetwork);
+            setIsConnected(true);
+          }
+        } catch {
+          // Extension not authorized yet
+        }
+      }
     };
     checkAvailability();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const connect = useCallback(async () => {
@@ -41,30 +69,30 @@ export function useMidnightWallet(): MidnightWalletState {
     setError(null);
     try {
       const provider = window.midnight?.mnLace ?? window.midnight?.lace;
-      if (provider) {
-        const api: MidnightLaceApi = await provider.enable();
-        const unshielded = await api.getUnshieldedAddress();
-        const shielded = await api.getShieldedAddress();
-        const bal = await api.getBalance();
-        const net = await api.getNetworkId();
-
-        setAddresses({
-          unshieldedAddress: unshielded,
-          shieldedAddress: shielded,
-        });
-        setBalance(bal);
-        setNetwork(net);
-        setIsConnected(true);
-      } else {
-        // Dev / Simulator mode for environments without the extension
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        setAddresses(DEFAULT_SIMULATED_ADDRESS);
-        setBalance({ unshielded: 5000000000n, shielded: 12000000000n });
-        setIsConnected(true);
+      if (!provider) {
+        throw new Error(
+          'Midnight Lace wallet extension is not detected. Please install and enable the Midnight Lace extension in your browser.'
+        );
       }
+
+      const api: MidnightLaceApi = await provider.enable();
+      const unshielded = await api.getUnshieldedAddress();
+      const shielded = await api.getShieldedAddress();
+      const bal = await api.getBalance();
+      const net = (await api.getNetworkId?.()) || 'preprod';
+
+      setLaceApi(api);
+      setAddresses({
+        unshieldedAddress: unshielded,
+        shieldedAddress: shielded,
+      });
+      setBalance(bal);
+      setNetwork(net as MidnightNetwork);
+      setIsConnected(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to connect Lace wallet');
+      setError(err instanceof Error ? err.message : 'Failed to connect Midnight Lace wallet');
       setIsConnected(false);
+      setLaceApi(null);
     } finally {
       setIsConnecting(false);
     }
@@ -72,6 +100,7 @@ export function useMidnightWallet(): MidnightWalletState {
 
   const disconnect = useCallback(() => {
     setIsConnected(false);
+    setLaceApi(null);
     setAddresses(null);
     setBalance(null);
     setError(null);
@@ -89,6 +118,7 @@ export function useMidnightWallet(): MidnightWalletState {
     addresses,
     balance,
     error,
+    laceApi,
     connect,
     disconnect,
     switchNetwork,

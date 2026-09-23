@@ -295,6 +295,20 @@ export class Contract {
     __compactRuntime.assert(!this._equal_0(nullifier_0,
                                            new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])),
                             'Invalid participant secret');
+    const lastNullifier_0 = _descriptor_0.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                       partialProofData,
+                                                                                       [
+                                                                                        { dup: { n: 0 } },
+                                                                                        { idx: { cached: false,
+                                                                                                 pushPath: false,
+                                                                                                 path: [
+                                                                                                        { tag: 'value',
+                                                                                                          value: { value: _descriptor_2.toValue(2n),
+                                                                                                                   alignment: _descriptor_2.alignment() } }] } },
+                                                                                        { popeq: { cached: false,
+                                                                                                   result: undefined } }]).value);
+    __compactRuntime.assert(!this._equal_0(nullifier_0, lastNullifier_0),
+                            'Nullifier has already been submitted for this survey');
     const tmp_0 = ((t1) => {
                     if (t1 > 18446744073709551615n) {
                       throw new __compactRuntime.CompactError('feedback.compact line 50 char 20: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');

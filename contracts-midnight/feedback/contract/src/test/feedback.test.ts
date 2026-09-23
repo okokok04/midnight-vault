@@ -92,5 +92,19 @@ describe('StellarVault Anonymous Feedback Contract', () => {
 
     expect(nullifierTopic1).not.toEqual(nullifierTopic2);
   });
+
+  it('prevents double-submission on-chain via persistent nullifiers set', () => {
+    const sim = new FeedbackSimulator(topic, aliceSecret);
+
+    // Alice submits first rating
+    sim.asParticipant(aliceSecret);
+    sim.submitRating(5n, FeedbackCategory.COMMUNICATION);
+
+    // Alice attempts to submit second rating with same secret and topic
+    expect(() => sim.submitRating(4n, FeedbackCategory.WORK_QUALITY)).toThrow(
+      /Nullifier has already been submitted/i
+    );
+  });
 });
+
 

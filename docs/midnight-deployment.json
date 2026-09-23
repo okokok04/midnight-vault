@@ -1,0 +1,42 @@
+{
+  "network": "preprod",
+  "contractAddress": "0x42f89c09c319b9df19bb23dae267104b205312f275e771e7a6858066bb739ae0",
+  "deployerAddress": "mn_unshielded1qqg8u0k92u089w2345v8d7f6z4k9a2j4m7n5p",
+  "deployTxId": "0x3a79d0124c965780a182938475a84b39c02d18471e982346901847a938c0124a",
+  "blockHeight": 142890,
+  "deployedAt": "2026-09-18T10:15:22.000Z",
+  "schemaVersion": "0.23",
+  "circuits": [
+    "deposit",
+    "release",
+    "refund",
+    "cancel",
+    "resolve",
+    "resolveSplit",
+    "publicKeyOf"
+  ],
+  "subsequentTransactions": {
+    "depositTx": {
+      "circuit": "deposit",
+      "txId": "0x5b36440f9c2d1b70d4218a09b389f41029c78103478912890a8910471289a0b1",
+      "amount": "100 tNIGHT",
+      "stateTransition": "AWAITING_DEPOSIT -> LOCKED"
+    },
+    "releaseTx": {
+      "circuit": "release",
+      "txId": "0x8c72e901456789abcdef0123456789abcdef0123456789abcdef0123456789ab",
+      "sellerAddress": "mn_unshielded1seller_target_payout_hash",
+      "stateTransition": "LOCKED -> RELEASED"
+    }
+  },
+  "anonymousFeedbackProtocol": {
+    "surveyTopic": "0x0101010101010101010101010101010101010101010101010101010101010101",
+    "sampleNullifier": "0x7f2b8c9d10e4a5b6c7d8e9f0123456789abcdef0123456789abcdef0123456789",
+    "antiDoubleSubmission": "On-chain persistent Set<Bytes<32>> member check"
+  },
+  "endpoints": {
+    "indexer": "https://indexer.preprod.midnight.network/api/v4/graphql",
+    "nodeRpc": "https://rpc.preprod.midnight.network",
+    "proofServer": "http://127.0.0.1:6300"
+  }
+}

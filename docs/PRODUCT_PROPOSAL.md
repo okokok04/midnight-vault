@@ -46,17 +46,23 @@ The contract is written in Midnight's **Compact** language (`0.23`):
   ```
   Deterministic one-way hash proving participation in a specific survey topic without revealing which secret generated it.
 
-- **Selective Disclosure:**
+- **Selective Disclosure & Persistent Nullifier Set:**
   ```compact
+  export ledger nullifiers: Set<Bytes<32>>;
+
   export circuit submitRating(rating: Uint<8>, category: FeedbackCategory): [] {
     assert(rating >= 1 && rating <= 5, "Rating must be between 1 and 5");
     const secret = participantSecret();
     const nullifier = computeNullifier(secret, surveyTopic);
     assert(nullifier != pad(32, ""), "Invalid participant secret");
 
+    // On-chain anti-double-submission guard
+    assert(!nullifiers.member(nullifier), "Nullifier has already been submitted for this survey");
+
     totalResponses = (totalResponses + 1) as Uint<64>;
     totalRatingSum = (totalRatingSum + (disclose(rating) as Uint<64>)) as Uint<64>;
     lastNullifier = disclose(nullifier);
+    nullifiers.insert(disclose(nullifier));
   }
   ```
 
@@ -68,7 +74,7 @@ The contract is written in Midnight's **Compact** language (`0.23`):
 | :--- | :---: | :--- |
 | **Total Responses Count** | 🌐 Public | `totalResponses: Uint<64>` on public ledger |
 | **Aggregate Rating Score** | 🌐 Public | `totalRatingSum: Uint<64>` on public ledger (allows computing average rating) |
-| **Cryptographic Nullifier** | 🌐 Public | `lastNullifier: Bytes<32>` (ensures each secret can only vote once per topic) |
+| **Cryptographic Nullifier Set** | 🌐 Public | `nullifiers: Set<Bytes<32>>` (enforces 1-person-1-vote on-chain) |
 | **Survey Topic Hash** | 🌐 Public | `surveyTopic: Bytes<32>` |
 | **Participant Identity / Address** | 🔒 **PRIVATE** | Never stored on-chain or passed in transactions |
 | **Participant Secret Key** | 🔒 **PRIVATE** | Evaluated strictly locally via `participantSecret()` witness |
@@ -83,17 +89,20 @@ The contract is written in Midnight's **Compact** language (`0.23`):
 - **User Story 2 (Community / Client):** As a platform user, I want to verify the true average satisfaction rating of a client or freelancer before entering a milestone contract.
   - *Acceptance:* Anyone querying the contract can compute `averageRating = totalRatingSum / totalResponses` verifiably.
 - **User Story 3 (Platform Arbiter / Admin):** As a platform governor, I want to prevent bad actors from spamming multiple ratings.
-  - *Acceptance:* Nullifier verification ensures 1 secret = 1 vote per topic.
+  - *Acceptance:* Nullifier verification ensures 1 secret = 1 vote per topic on-chain.
 
 ---
 
 ## 6. Verification & Test Suite
 
-The contract is validated via a Vitest simulator suite with **5 comprehensive tests** in `contracts-midnight/feedback/contract/src/test/feedback.test.ts`:
-1. Contract initialization with 0 responses.
+The contract is validated via a Vitest simulator suite with **8 comprehensive tests** in `contracts-midnight/feedback/contract/src/test/feedback.test.ts`:
+1. Contract initialization with 0 responses and empty nullifier set.
 2. Valid rating submission and aggregate metric updates.
 3. Rating boundary enforcement (rejects `< 1` or `> 5`).
 4. Multi-party anonymous aggregation (Alice, Bob, Charlie).
 5. Distinct cryptographic nullifiers for distinct secrets.
+6. Deterministic nullifier generation matching on-chain submission.
+7. Topic-separated nullifier derivation.
+8. On-chain anti-double-submission prevention via `nullifiers` set.
 
-All 5 tests run and pass in continuous integration.
+All 8 tests run and pass in continuous integration.

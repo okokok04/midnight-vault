@@ -52,7 +52,7 @@ export interface FeedbackPrivateWitness {
 }
 
 export interface CircuitProofTrace {
-  circuitName: 'deposit' | 'release' | 'refund' | 'resolve' | 'publicKeyOf' | 'submitRating';
+  circuitName: 'deposit' | 'release' | 'refund' | 'cancel' | 'resolve' | 'resolveSplit' | 'publicKeyOf' | 'submitRating';
   timestamp: string;
   privateWitnessUsed: string;
   zkProofGenerated: boolean;
@@ -68,7 +68,7 @@ export interface OnChainEscrowState {
   sellerPk: string;
   arbiterPk: string;
   milestoneAmount: bigint;
-  state: 'AWAITING_DEPOSIT' | 'LOCKED' | 'RELEASED' | 'REFUNDED' | 'RESOLVED';
+  state: 'AWAITING_DEPOSIT' | 'LOCKED' | 'RELEASED' | 'REFUNDED' | 'CANCELLED' | 'RESOLVED';
   contractAddress: string;
   lastUpdatedBlock?: number;
 }

@@ -1,9 +1,24 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MidnightLaceConnect } from './MidnightLaceConnect';
 import { MidnightPrivacyInspector } from './MidnightPrivacyInspector';
 import { MidnightEscrowPanel } from './MidnightEscrowPanel';
 import type { MidnightWalletState } from '../hooks/useMidnightWallet';
+
+const mockLaceApi = {
+  getNetworkId: vi.fn().mockResolvedValue('preprod'),
+  getUnshieldedAddress: vi.fn().mockResolvedValue('mn_unshielded1qqg8u0k92u089w2345v8d7f6z4k9a2j4m7n5p'),
+  getShieldedAddress: vi.fn().mockResolvedValue('shielded_addr_0123456789abcdef'),
+  getBalance: vi.fn().mockResolvedValue({
+    unshielded: 1250000000n,
+    shielded: 5000000000n,
+  }),
+  proveTx: vi.fn().mockResolvedValue({
+    proof: new Uint8Array([1, 2, 3, 4]),
+    publicOutputs: { proofHash: '0xzkproof_5b36440f9c2d1b70d4218a09b389f41029c78103478912890a8910471289a0b1' },
+  }),
+  submitTx: vi.fn().mockResolvedValue('0x5b36440f9c2d1b70d4218a09b389f41029c78103478912890a8910471289a0b1'),
+};
 
 describe('MidnightLaceConnect', () => {
   it('renders disconnected state and calls connect on click', () => {
@@ -16,6 +31,7 @@ describe('MidnightLaceConnect', () => {
       addresses: null,
       balance: null,
       error: null,
+      laceApi: null,
       connect: connectMock,
       disconnect: vi.fn(),
       switchNetwork: vi.fn(),
@@ -41,6 +57,7 @@ describe('MidnightLaceConnect', () => {
       },
       balance: { unshielded: 5000000000n, shielded: 10000000000n },
       error: null,
+      laceApi: mockLaceApi,
       connect: vi.fn(),
       disconnect: disconnectMock,
       switchNetwork: vi.fn(),
@@ -80,11 +97,30 @@ describe('MidnightPrivacyInspector', () => {
 });
 
 describe('MidnightEscrowPanel', () => {
-  it('renders escrow panel and allows calling circuits', async () => {
+  beforeEach(() => {
+    (window as unknown as { midnight?: unknown }).midnight = {
+      mnLace: {
+        enable: vi.fn().mockResolvedValue(mockLaceApi),
+        isEnabled: vi.fn().mockResolvedValue(true),
+        apiVersion: '1.0.0',
+        name: 'Lace Midnight Wallet',
+        icon: '',
+      },
+    };
+  });
+
+  afterEach(() => {
+    delete (window as unknown as { midnight?: unknown }).midnight;
+  });
+
+  it('renders escrow panel and allows calling circuits with Lace connected', async () => {
     render(<MidnightEscrowPanel />);
 
     expect(screen.getByText('Midnight Compact Escrow State')).toBeInTheDocument();
-    expect(screen.getByText('1. circuit deposit()')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText(/mn_unshielded/i)).toBeInTheDocument();
+    });
 
     const depositBtn = screen.getByText('1. circuit deposit()');
     fireEvent.click(depositBtn);
@@ -96,6 +132,22 @@ describe('MidnightEscrowPanel', () => {
 });
 
 describe('MidnightFeedbackPanel', () => {
+  beforeEach(() => {
+    (window as unknown as { midnight?: unknown }).midnight = {
+      mnLace: {
+        enable: vi.fn().mockResolvedValue(mockLaceApi),
+        isEnabled: vi.fn().mockResolvedValue(true),
+        apiVersion: '1.0.0',
+        name: 'Lace Midnight Wallet',
+        icon: '',
+      },
+    };
+  });
+
+  afterEach(() => {
+    delete (window as unknown as { midnight?: unknown }).midnight;
+  });
+
   it('renders feedback protocol and allows submitting rating with nullifier tracking', async () => {
     const { MidnightFeedbackPanel } = await import('./MidnightFeedbackPanel');
     render(<MidnightFeedbackPanel />);

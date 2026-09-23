@@ -33,6 +33,15 @@ export interface GraphQLContractStateResponse {
   errors?: Array<{ message: string }>;
 }
 
+const STATE_ENUM_MAP: Record<number, OnChainEscrowState['state']> = {
+  0: 'AWAITING_DEPOSIT',
+  1: 'LOCKED',
+  2: 'RELEASED',
+  3: 'REFUNDED',
+  4: 'CANCELLED',
+  5: 'RESOLVED',
+};
+
 export class MidnightIndexerService {
   private network: MidnightNetwork;
 
@@ -52,29 +61,29 @@ export class MidnightIndexerService {
    * Executes a GraphQL query against the Midnight indexer
    */
   async queryGraphQL<T = GraphQLContractStateResponse>(query: string, variables?: Record<string, unknown>): Promise<T> {
-    try {
-      const response = await fetch(this.getEndpoint(), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({ query, variables }),
-      });
+    const response = await fetch(this.getEndpoint(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ query, variables }),
+    });
 
-      if (!response.ok) {
-        throw new Error(`Indexer GraphQL error: ${response.statusText} (${response.status})`);
-      }
-
-      return await response.json();
-    } catch (err) {
-      // In test / offline environments, gracefully bubble formatted error
-      throw new Error(`Midnight Indexer unavailable: ${err instanceof Error ? err.message : String(err)}`);
+    if (!response.ok) {
+      throw new Error(`Midnight Indexer GraphQL error: ${response.statusText} (${response.status})`);
     }
+
+    const json = await response.json();
+    if (json.errors && json.errors.length > 0) {
+      throw new Error(`Midnight Indexer query failed: ${json.errors.map((e: { message: string }) => e.message).join(', ')}`);
+    }
+
+    return json;
   }
 
   /**
-   * Queries public escrow contract state from the Midnight indexer
+   * Queries public escrow contract state from the Midnight indexer and decodes Compact ledger fields.
    */
   async fetchEscrowState(contractAddress: string = PREPROD_DEPLOYED_CONTRACT): Promise<OnChainEscrowState> {
     const query = `
@@ -82,6 +91,7 @@ export class MidnightIndexerService {
         contract(address: $address) {
           address
           state
+          stateValue
           blockHeight
           updatedAt
         }
@@ -90,26 +100,30 @@ export class MidnightIndexerService {
 
     try {
       const result = await this.queryGraphQL<GraphQLContractStateResponse>(query, { address: contractAddress });
-      if (result.data?.contract) {
-        const contract = result.data.contract;
-        // Parse ledger fields if available in GraphQL response
+      const contract = result.data?.contract;
+
+      if (contract && contract.stateValue) {
+        const stateValue = contract.stateValue as Record<string, unknown>;
+        const rawStateNum = typeof stateValue.state === 'number' ? stateValue.state : 0;
+        const decodedState = STATE_ENUM_MAP[rawStateNum] || 'AWAITING_DEPOSIT';
+
         return {
           contractAddress: contract.address,
-          buyerPk: '0x3a79d0124c965780a182938475a84b39c02d18471e982346901847a938c0124a',
-          sellerPk: '0x71a4f3b2c8e9d0123456789abcdef0123456789abcdef0123456789abcdef012',
-          arbiterPk: '0x99e8d7c6b5a43210fedcba9876543210fedcba9876543210fedcba9876543210',
-          milestoneAmount: 100n,
-          state: 'AWAITING_DEPOSIT',
-          lastUpdatedBlock: contract.blockHeight ?? 142890,
+          buyerPk: String(stateValue.buyer || '0x0000000000000000000000000000000000000000000000000000000000000000'),
+          sellerPk: String(stateValue.seller || '0x0000000000000000000000000000000000000000000000000000000000000000'),
+          arbiterPk: String(stateValue.arbiter || '0x0000000000000000000000000000000000000000000000000000000000000000'),
+          milestoneAmount: typeof stateValue.milestoneAmount === 'bigint' ? stateValue.milestoneAmount : BigInt(String(stateValue.milestoneAmount || 100)),
+          state: decodedState,
+          lastUpdatedBlock: contract.blockHeight,
         };
       }
     } catch {
-      // Fallback to verified committed preprod default when indexer is remote/offline in local tests
+      // In offline / testing or initial indexer sync state
     }
 
     return {
       contractAddress,
-      buyerPk: '0x3a79d0124c965780a182938475a84b39c02d18471e982346901847a938c0124a',
+      buyerPk: '',
       sellerPk: '0x71a4f3b2c8e9d0123456789abcdef0123456789abcdef0123456789abcdef012',
       arbiterPk: '0x99e8d7c6b5a43210fedcba9876543210fedcba9876543210fedcba9876543210',
       milestoneAmount: 100n,
@@ -119,36 +133,51 @@ export class MidnightIndexerService {
   }
 
   /**
-   * Queries feedback tallies and consumed nullifiers from the Midnight indexer
+   * Queries feedback tallies and persistent consumed nullifiers from the Midnight indexer.
    */
   async fetchFeedbackState(surveyTopic: string): Promise<OnChainFeedbackState> {
     const query = `
-      query GetFeedbackNullifiers($topic: String!) {
-        contract(address: $topic) {
+      query GetFeedbackContractState($address: String!) {
+        contract(address: $address) {
           address
           state
+          stateValue
+          blockHeight
         }
       }
     `;
 
     try {
-      await this.queryGraphQL(query, { topic: surveyTopic });
+      const result = await this.queryGraphQL<GraphQLContractStateResponse>(query, { address: PREPROD_DEPLOYED_CONTRACT });
+      const contract = result.data?.contract;
+
+      if (contract && contract.stateValue) {
+        const sv = contract.stateValue as Record<string, unknown>;
+        const rawNullifiers = Array.isArray(sv.nullifiers) ? (sv.nullifiers as string[]) : [];
+
+        return {
+          contractAddress: contract.address,
+          surveyTopic,
+          totalResponses: Number(sv.totalResponses || 0),
+          totalRatingSum: Number(sv.totalRatingSum || 0),
+          lastNullifier: String(sv.lastNullifier || ''),
+          consumedNullifiers: rawNullifiers,
+        };
+      }
     } catch {
-      // Offline fallback
+      // In offline / initial state before deployment
     }
 
     return {
       contractAddress: PREPROD_DEPLOYED_CONTRACT,
       surveyTopic,
-      totalResponses: 12,
-      totalRatingSum: 58,
-      lastNullifier: '0x7f2b8c9d10e4a5b6c7d8e9f0123456789abcdef0123456789abcdef0123456789',
-      consumedNullifiers: [
-        '0x7f2b8c9d10e4a5b6c7d8e9f0123456789abcdef0123456789abcdef0123456789',
-        '0x1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f809',
-      ],
+      totalResponses: 0,
+      totalRatingSum: 0,
+      lastNullifier: '',
+      consumedNullifiers: [],
     };
   }
 }
 
 export const midnightIndexer = new MidnightIndexerService('preprod');
+

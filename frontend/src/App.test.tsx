@@ -3,6 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 
 function mockFetchJson(path: string) {
+  if (path.includes("graphql") || path.includes("midnight")) {
+    return { data: { contract: null } };
+  }
   if (path.endsWith("/escrows")) return [];
   if (path.endsWith("/feedback")) return [];
   if (path.endsWith("/stats")) {

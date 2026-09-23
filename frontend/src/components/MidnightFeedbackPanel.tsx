@@ -4,7 +4,10 @@ import { CopyButton } from './CopyButton';
 import { VoteIcon, RefreshCwIcon, CheckCircleIcon, ExternalLinkIcon } from './Icons';
 import { EXPLORER_URLS } from '../lib/midnight-indexer';
 
+import { useMidnightWallet } from '../hooks/useMidnightWallet';
+
 export function MidnightFeedbackPanel() {
+  const wallet = useMidnightWallet();
   const {
     participantSecret,
     currentNullifier,
@@ -16,7 +19,7 @@ export function MidnightFeedbackPanel() {
     updateParticipantSecret,
     regenerateSecret,
     submitRating,
-  } = useMidnightFeedback();
+  } = useMidnightFeedback(wallet.laceApi);
 
   const [rating, setRating] = useState<number>(5);
   const [category, setCategory] = useState<string>('WORK_QUALITY');
