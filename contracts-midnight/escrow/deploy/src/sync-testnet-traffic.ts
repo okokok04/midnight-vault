@@ -12,7 +12,8 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DOCS_DIR = path.resolve(__dirname, '../../../../docs');
-const CSV_DEST = path.join(DOCS_DIR, 'stellarvault-feedback.csv');
+const CSV_DEST = path.join(DOCS_DIR, 'midnightvault-feedback.csv');
+const CSV_LEGACY = path.join(DOCS_DIR, 'stellarvault-feedback.csv');
 const JSON_DEST = path.join(DOCS_DIR, 'form-verification-full.json');
 const ACTIVITY_JSON = path.join(DOCS_DIR, 'midnight-activity.json');
 const LEGACY_JSON = path.join(DOCS_DIR, 'midnight-synthetic-users.json');
@@ -91,6 +92,7 @@ async function main() {
   // 1. Export Clean CSV
   const pureCsvLines = rows.map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(','));
   fs.writeFileSync(CSV_DEST, pureCsvLines.join('\n'), 'utf-8');
+  fs.writeFileSync(CSV_LEGACY, pureCsvLines.join('\n'), 'utf-8');
 
   const dataRows = rows.slice(1);
 
