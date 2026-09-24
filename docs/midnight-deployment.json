@@ -38,5 +38,13 @@
     "indexer": "https://indexer.preprod.midnight.network/api/v4/graphql",
     "nodeRpc": "https://rpc.preprod.midnight.network",
     "proofServer": "http://127.0.0.1:6300"
+  },
+  "verifiedUserActivity": {
+    "totalWallets": 71,
+    "totalConfirmedTransactions": 71,
+    "datasetFile": "docs/midnight-activity.json",
+    "txListMarkdown": "docs/MIDNIGHT_ONCHAIN_TX_LIST.md",
+    "latestBlockHeight": 171689,
+    "lastUpdated": "2026-09-24T03:22:42.601Z"
   }
 }

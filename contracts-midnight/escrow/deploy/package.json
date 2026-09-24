@@ -8,6 +8,7 @@
     "wallet:balance": "tsx src/wallet-balance.ts",
     "deploy": "tsx src/deploy.ts",
     "verify": "tsx src/verify-contract.ts",
+    "sync:traffic": "node --import tsx src/sync-testnet-traffic.ts",
     "test": "vitest run"
   },
   "dependencies": {
