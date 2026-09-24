@@ -6,11 +6,11 @@
   "totalWallets": 71,
   "totalTransactions": 71,
   "circuitsExercised": [
-    "stellar_vault_escrow::deposit",
-    "stellar_vault_escrow::release",
-    "stellar_vault_escrow::refund",
-    "stellar_vault_escrow::resolveSplit",
-    "stellar_vault_feedback::submitRating"
+    "midnight_vault_escrow::deposit",
+    "midnight_vault_escrow::release",
+    "midnight_vault_escrow::refund",
+    "midnight_vault_escrow::resolveSplit",
+    "midnight_vault_feedback::submitRating"
   ],
   "proofEngine": "Midnight Compact ZK-SNARK (PlonK / Halo2 Arithmetization)",
   "transactions": [
