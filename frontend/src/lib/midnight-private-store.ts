@@ -1,10 +1,10 @@
 import { generateRandomSecret } from './midnight-crypto';
 
 const STORAGE_KEYS = {
-  ESCROW_PRIVATE_SECRET: 'stellarvault:midnight:escrow_secret',
-  FEEDBACK_PARTICIPANT_SECRET: 'stellarvault:midnight:feedback_secret',
-  CONSUMED_NULLIFIERS: 'stellarvault:midnight:consumed_nullifiers',
-  TRANSACTION_HISTORY: 'stellarvault:midnight:tx_history',
+  ESCROW_PRIVATE_SECRET: 'midnightvault:midnight:escrow_secret',
+  FEEDBACK_PARTICIPANT_SECRET: 'midnightvault:midnight:feedback_secret',
+  CONSUMED_NULLIFIERS: 'midnightvault:midnight:consumed_nullifiers',
+  TRANSACTION_HISTORY: 'midnightvault:midnight:tx_history',
 };
 
 export class MidnightPrivateStore {
@@ -76,7 +76,7 @@ export class MidnightPrivateStore {
   static async computeNullifier(secret: string, surveyTopic: string): Promise<string> {
     const cleanSecret = secret.replace(/^0x/, '').padStart(64, '0').slice(0, 64);
     const cleanTopic = surveyTopic.replace(/^0x/, '').padStart(64, '0').slice(0, 64);
-    const prefix = new TextEncoder().encode('stellarvault:feedback:nullifier:');
+    const prefix = new TextEncoder().encode('midnightvault:nullifier:');
     const paddedPrefix = new Uint8Array(32);
     paddedPrefix.set(prefix);
 

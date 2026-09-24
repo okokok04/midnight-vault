@@ -11,7 +11,7 @@ export interface WalletState {
   disconnect: () => void;
 }
 
-/// CIP-30 wallet connection. StellarVault only needs the wallet's first
+/// CIP-30 wallet connection. MidnightVault only needs the wallet's first
 /// used address (to prove control over buyer/seller/arbiter roles when
 /// creating an escrow) — signing transactions happens server-side today,
 /// so we never request `signTx` here.

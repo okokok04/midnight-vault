@@ -21,13 +21,13 @@ export function MidnightPrivacyInspector({
   // Simulated real ZK-IR Proof Payload for live inspection
   const sampleZkProofJson = {
     protocol: "Midnight Compact ZK-SNARK (PlonK / Halo2 Arithmetization)",
-    circuit: "stellar_vault_escrow::release",
+    circuit: "midnight_vault_escrow::release",
     curve: "BLS12-381 / Jubjub Embedded",
     constraints: 4328,
     provingKeyHash: "0x8fa1b9e2c4d6f8a0123456789abcdef0123456789abcdef0123456789abcdef0",
     publicInputs: [
       privateState.derivedPublicKey || "0x0000000000000000000000000000000000000000000000000000000000000000",
-      "0x5374656c6c61725661756c745f4d696c6573746f6e655f303031000000000000",
+      "0x4d69646e696768745661756c745f4d696c6573746f6e655f3030310000000000",
     ],
     proofData: {
       a: "0x29a4f61e8093dbac875143a15276e48c08efbc01289de61d9a2468bc701f5e82",

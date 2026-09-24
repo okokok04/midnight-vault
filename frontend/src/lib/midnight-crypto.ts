@@ -1,11 +1,11 @@
 /**
  * Computes deterministic 32-byte public key hash from a private secret,
  * matching Compact's derivePublicKey logic:
- * persistentHash([pad(32, "stellarvault:pk:"), secret])
+ * persistentHash([pad(32, "midnightvault:pk:"), secret])
  */
 export async function deriveMidnightPublicKey(secretHex: string): Promise<string> {
   const cleanHex = secretHex.replace(/^0x/, '').padStart(64, '0').slice(0, 64);
-  const prefix = new TextEncoder().encode('stellarvault:pk:');
+  const prefix = new TextEncoder().encode('midnightvault:pk:');
   const paddedPrefix = new Uint8Array(32);
   paddedPrefix.set(prefix);
 

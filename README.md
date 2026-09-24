@@ -1,18 +1,18 @@
-# StellarVault
+# MidnightVault
 
 > Trustless milestone escrow for freelance & remote work, built on Midnight Network.
 
-[![CI](https://github.com/okokok04/stellarvault/actions/workflows/ci.yml/badge.svg)](https://github.com/okokok04/stellarvault/actions/workflows/ci.yml)
-[![Deploy frontend](https://github.com/okokok04/stellarvault/actions/workflows/deploy-frontend.yml/badge.svg)](https://github.com/okokok04/stellarvault/actions/workflows/deploy-frontend.yml)
+[![CI](https://github.com/okokok04/midnight-vault/actions/workflows/ci.yml/badge.svg)](https://github.com/okokok04/midnight-vault/actions/workflows/ci.yml)
+[![Deploy frontend](https://github.com/okokok04/midnight-vault/actions/workflows/deploy-frontend.yml/badge.svg)](https://github.com/okokok04/midnight-vault/actions/workflows/deploy-frontend.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Network](https://img.shields.io/badge/network-Midnight%20Preprod-blue)](docs/SETUP.md)
 
 Cross-border freelance work has a trust problem in both directions: buyers
 don't want to pay upfront for undelivered work, and sellers don't want to
-deliver work they might never get paid for. **StellarVault** locks each
+deliver work they might never get paid for. **MidnightVault** locks each
 milestone's payment in a Midnight smart contract that releases funds only
 under one of three signature-checked conditions — no platform, and no
-StellarVault backend, can move the money any other way.
+MidnightVault backend, can move the money any other way.
 
 ## Midnight dApps: Privacy-Preserving Escrow & Anonymous Feedback
 
@@ -53,7 +53,7 @@ Walkthrough and test suites:
 | Midnight Property | Record / Explorer Link | Note |
 | :--- | :--- | :--- |
 | **Live Web App Demo (Vercel)** | [frontend-eight-alpha-39.vercel.app](https://frontend-eight-alpha-39.vercel.app/) | Primary live web deployment |
-| **Live Web App Demo (GitHub Pages)** | [okokok04.github.io/stellarvault](https://okokok04.github.io/stellarvault/) | Production dashboard mirror |
+| **Live Web App Demo (GitHub Pages)** | [okokok04.github.io/midnight-vault](https://okokok04.github.io/midnight-vault/) | Production dashboard mirror |
 | **Midnight Contract Address (CA)** | [`0x42f89c09c319b9df19bb23dae267104b205312f275e771e7a6858066bb739ae0`](https://indexer.preprod.midnight.network/) | Canonical Compact 0.23 milestone escrow bytecode |
 | **Deployer Wallet Address** | `mn_unshielded1qqg8u0k92u089w2345v8d7f6z4k9a2j4m7n5p` | Midnight Preprod deployer account |
 | **Deployment Transaction ID** | [`0x3a79d0124c965780a182938475a84b39c02d18471e982346901847a938c0124a`](https://indexer.preprod.midnight.network/) | Block height 142890 |
@@ -66,9 +66,9 @@ The deposit and release transactions above represent real on-chain executions on
 
 ## Product & Video Demo
 
-[![StellarVault Demo Video - Wallet Connect & ZK Circuit Call](https://img.shields.io/badge/Demo%20Video-Watch%20Wallet%20Connect%20%26%20Circuit%20Execution-8b5cf6?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1dfl-PEse7T6iJ8OFS7otk2VUeMl7WlJV/view?usp=sharing)
+[![MidnightVault Demo Video - Wallet Connect & ZK Circuit Call](https://img.shields.io/badge/Demo%20Video-Watch%20Wallet%20Connect%20%26%20Circuit%20Execution-8b5cf6?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1dfl-PEse7T6iJ8OFS7otk2VUeMl7WlJV/view?usp=sharing)
 
-> 🎬 **Demo Video (Google Drive):** [Watch StellarVault Demo Walkthrough Video](https://drive.google.com/file/d/1dfl-PEse7T6iJ8OFS7otk2VUeMl7WlJV/view?usp=sharing) *(Demonstrating Lace Wallet Connect + Successful Compact ZK Circuit Invocation)*
+> 🎬 **Demo Video (Google Drive):** [Watch MidnightVault Demo Walkthrough Video](https://drive.google.com/file/d/1dfl-PEse7T6iJ8OFS7otk2VUeMl7WlJV/view?usp=sharing) *(Demonstrating Lace Wallet Connect + Successful Compact ZK Circuit Invocation)*
 > 
 > **X (Twitter) Profile:** [x.com/manh71546](https://x.com/manh71546) — see [`demo/X_PROFILE.md`](demo/X_PROFILE.md) for launch announcements.
 
@@ -190,20 +190,20 @@ The video demonstrates the complete end-to-end user and cryptographic flow on Mi
 
 | User ID | Name | Email | Midnight Wallet Address | Feedback Summary | Improvement Made | Git Commit ID |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| MN-SYN-006 | Vũ Minh Phúc | `vuphuc.3129@gmail.com` | `mn_unshielded158u99q5h5e6u9k867h079m8082697v760z366e6` | Suggested: Preset deadline buttons for faster milestone setup on mobile | Added quick-select deadline presets (+1, +3, +7, +14 days) in `EscrowForm.tsx` | [`d3a2138`](https://github.com/okokok04/stellarvault/commit/d3a2138f47c1f585e6a8fa9b96344d6d4cfcdaf1) |
-| MN-SYN-018 | Bùi Quang Phúc | `buiphuc.4773@gmail.com` | `mn_unshielded13u7e8u2h5m0uh7q6069yav842m54u02m6e6y8q6` | Issue: Token secret re-used across sessions needs deterministic refresh | Added 'Fresh Token' button generating new cryptographic secret & nullifier | [`513dc04`](https://github.com/okokok04/stellarvault/commit/513dc04) |
-| MN-SYN-025 | Hoàng Đức Linh | `linh.duchoang5732@gmail.com` | `mn_unshielded10m384l0uh326550z9v0s2l54u6776q83946r8u4` | Suggested: Smooth navigation when clicking Launch ZK Escrow | Added smooth scroll navigation targeting ZK Escrow & hero pillar items | [`8fcee29`](https://github.com/okokok04/stellarvault/commit/8fcee29) |
-| MN-SYN-033 | Lê Thảo Phúc | `phuc.thaole6828@gmail.com` | `mn_unshielded13m26696776q83946r8u409y796038d052h0z9v0` | Issue: Hero section had repetitive secondary documentation buttons | Streamlined hero command strip by removing redundant action buttons | [`679dbbb`](https://github.com/okokok04/stellarvault/commit/679dbbb) |
-| MN-SYN-015 | Hoàng Quang Phúc | `phuchoang338@gmail.com` | `mn_unshielded1h5297w2j79766q83946r8u409y796033m26693` | Liked: In-app feedback management with public status tracking | Implemented live feedback submission and 1-click status triage workflow | [`3d2ce39`](https://github.com/okokok04/stellarvault/commit/3d2ce39) |
+| MN-SYN-006 | Vũ Minh Phúc | `vuphuc.3129@gmail.com` | `mn_unshielded158u99q5h5e6u9k867h079m8082697v760z366e6` | Suggested: Preset deadline buttons for faster milestone setup on mobile | Added quick-select deadline presets (+1, +3, +7, +14 days) in `EscrowForm.tsx` | [`d3a2138`](https://github.com/okokok04/midnight-vault/commit/d3a2138f47c1f585e6a8fa9b96344d6d4cfcdaf1) |
+| MN-SYN-018 | Bùi Quang Phúc | `buiphuc.4773@gmail.com` | `mn_unshielded13u7e8u2h5m0uh7q6069yav842m54u02m6e6y8q6` | Issue: Token secret re-used across sessions needs deterministic refresh | Added 'Fresh Token' button generating new cryptographic secret & nullifier | [`513dc04`](https://github.com/okokok04/midnight-vault/commit/513dc04) |
+| MN-SYN-025 | Hoàng Đức Linh | `linh.duchoang5732@gmail.com` | `mn_unshielded10m384l0uh326550z9v0s2l54u6776q83946r8u4` | Suggested: Smooth navigation when clicking Launch ZK Escrow | Added smooth scroll navigation targeting ZK Escrow & hero pillar items | [`8fcee29`](https://github.com/okokok04/midnight-vault/commit/8fcee29) |
+| MN-SYN-033 | Lê Thảo Phúc | `phuc.thaole6828@gmail.com` | `mn_unshielded13m26696776q83946r8u409y796038d052h0z9v0` | Issue: Hero section had repetitive secondary documentation buttons | Streamlined hero command strip by removing redundant action buttons | [`679dbbb`](https://github.com/okokok04/midnight-vault/commit/679dbbb) |
+| MN-SYN-015 | Hoàng Quang Phúc | `phuchoang338@gmail.com` | `mn_unshielded1h5297w2j79766q83946r8u409y796033m26693` | Liked: In-app feedback management with public status tracking | Implemented live feedback submission and 1-click status triage workflow | [`3d2ce39`](https://github.com/okokok04/midnight-vault/commit/3d2ce39) |
 
 ### Improvement Summary
 
 Based on direct feedback collected from our 70+ testnet users and community testers:
-1. **Quick-Select Milestone Deadlines:** Added +1, +3, +7, and +14 day presets so users on mobile and desktop don't struggle with raw HTML datetime pickers ([`d3a2138`](https://github.com/okokok04/stellarvault/commit/d3a2138f47c1f585e6a8fa9b96344d6d4cfcdaf1)).
-2. **Fresh ZK Token Generation:** Enabled a dedicated **Fresh Token** generator ensuring participants can reset their cryptographic witness and nullifier seed for each test cycle ([`513dc04`](https://github.com/okokok04/stellarvault/commit/513dc04)).
-3. **Smooth Scroll & UX Flow:** Added smooth scroll navigation from hero CTAs directly to the interactive ZK Escrow circuit runner ([`8fcee29`](https://github.com/okokok04/stellarvault/commit/8fcee29)).
-4. **Hero Command Strip Refactor:** Streamlined primary CTAs and removed redundant documentation buttons to focus the user on wallet connection and escrow execution ([`679dbbb`](https://github.com/okokok04/stellarvault/commit/679dbbb)).
-5. **Live Feedback & Status Triage:** Integrated public community feedback submission and one-click status transitions (`new` → `triaged` → `actioned`) directly on the dashboard ([`3d2ce39`](https://github.com/okokok04/stellarvault/commit/3d2ce39)).
+1. **Quick-Select Milestone Deadlines:** Added +1, +3, +7, and +14 day presets so users on mobile and desktop don't struggle with raw HTML datetime pickers ([`d3a2138`](https://github.com/okokok04/midnight-vault/commit/d3a2138f47c1f585e6a8fa9b96344d6d4cfcdaf1)).
+2. **Fresh ZK Token Generation:** Enabled a dedicated **Fresh Token** generator ensuring participants can reset their cryptographic witness and nullifier seed for each test cycle ([`513dc04`](https://github.com/okokok04/midnight-vault/commit/513dc04)).
+3. **Smooth Scroll & UX Flow:** Added smooth scroll navigation from hero CTAs directly to the interactive ZK Escrow circuit runner ([`8fcee29`](https://github.com/okokok04/midnight-vault/commit/8fcee29)).
+4. **Hero Command Strip Refactor:** Streamlined primary CTAs and removed redundant documentation buttons to focus the user on wallet connection and escrow execution ([`679dbbb`](https://github.com/okokok04/midnight-vault/commit/679dbbb)).
+5. **Live Feedback & Status Triage:** Integrated public community feedback submission and one-click status transitions (`new` → `triaged` → `actioned`) directly on the dashboard ([`3d2ce39`](https://github.com/okokok04/midnight-vault/commit/3d2ce39)).
 
 
 ## Users & feedback
@@ -266,8 +266,8 @@ demo/                 Demo video script and X profile launch announcements
 ## Quick start
 
 ```sh
-git clone https://github.com/okokok04/stellarvault.git
-cd stellarvault
+git clone https://github.com/okokok04/midnight-vault.git
+cd midnight-vault
 
 cd contracts-midnight/escrow && npm install && npm test && cd ../..
 cd contracts-midnight/feedback && npm install && npm test && cd ../..

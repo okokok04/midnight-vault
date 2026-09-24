@@ -15,16 +15,16 @@ export function Footer({ setActiveTab }: Props) {
               <ShieldIcon width="20" height="20" />
             </div>
             <div>
-              <div className="brand-title" style={{ fontSize: "1.2rem", color: "#ffffff" }}>StellarVault Protocol</div>
-              <div style={{ fontSize: "0.76rem", color: "var(--text-dim)" }}>Protocol v0.3 • ZK-Beta</div>
+              <div className="brand-title" style={{ fontSize: "1.2rem", color: "#ffffff" }}>MidnightVault Protocol</div>
+              <div style={{ fontSize: "0.76rem", color: "var(--text-dim)" }}>Protocol v1.0 • Midnight ZK</div>
             </div>
           </div>
           <p className="footer-desc">
-            Trustless milestone escrow on Cardano paired with Zero-Knowledge selective disclosure on Midnight Network.
+            Trustless milestone escrow and anonymous feedback protocol powered by Zero-Knowledge proofs on Midnight Network.
           </p>
           <div className="network-pill" style={{ display: "inline-flex", marginTop: "0.85rem" }}>
             <span className="status-dot" />
-            <span>Cardano &amp; Midnight Preprod</span>
+            <span>Midnight Preprod Testnet</span>
           </div>
         </div>
 
@@ -82,7 +82,7 @@ export function Footer({ setActiveTab }: Props) {
               </a>
             </li>
             <li>
-              <a href="https://github.com/okokok04/stellarvault" target="_blank" rel="noreferrer" className="footer-nav-link">
+              <a href="https://github.com/okokok04/midnight-vault" target="_blank" rel="noreferrer" className="footer-nav-link">
                 <span>GitHub Repository</span>
                 <ExternalLinkIcon width="12" height="12" />
               </a>
@@ -131,13 +131,13 @@ export function Footer({ setActiveTab }: Props) {
 
       <div className="footer-bottom-bar">
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <span>© 2026 StellarVault Protocol</span>
+          <span>© 2026 MidnightVault Protocol</span>
           <span>•</span>
           <span style={{ color: "var(--text-dim)" }}>Open Source MIT License</span>
         </div>
 
         <div className="footer-socials">
-          <a href="https://github.com/okokok04/stellarvault" target="_blank" rel="noreferrer">
+          <a href="https://github.com/okokok04/midnight-vault" target="_blank" rel="noreferrer">
             GitHub
           </a>
           <a href="https://x.com/manh71546" target="_blank" rel="noreferrer">

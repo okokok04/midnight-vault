@@ -20,7 +20,7 @@ export function DocsView() {
             </div>
             <h2 style={{ margin: 0, fontSize: "1.45rem", display: "flex", alignItems: "center", gap: "0.6rem" }}>
               <LayersIcon width="22" height="22" />
-              <span>StellarVault Technical Documentation</span>
+              <span>MidnightVault Technical Documentation</span>
             </h2>
             <p style={{ margin: "0.35rem 0 0", fontSize: "0.88rem", color: "var(--text-muted)" }}>
               Complete reference guide for the multi-chain Zero-Knowledge milestone escrow &amp; confidential reputation protocol.
@@ -38,7 +38,7 @@ export function DocsView() {
               <ExternalLinkIcon width="13" height="13" />
             </a>
             <a
-              href="https://github.com/okokok04/stellarvault"
+              href="https://github.com/okokok04/midnight-vault"
               target="_blank"
               rel="noreferrer"
               className="secondary-btn"
@@ -120,11 +120,11 @@ export function DocsView() {
               <span className="badge badge-midnight">System Overview</span>
               <h3 className="docs-heading">Dual-Chain Protocol Architecture</h3>
               <p>
-                StellarVault combines the battle-tested deterministic UTxO settlement of <strong>Cardano</strong> with the confidential computing and Zero-Knowledge proofs of <strong>Midnight Network</strong>.
+                MidnightVault combines the battle-tested deterministic UTxO settlement of <strong>Cardano</strong> with the confidential computing and Zero-Knowledge proofs of <strong>Midnight Network</strong>.
               </p>
 
               <div className="docs-callout">
-                <strong>Why Milestone Escrow?</strong> Cross-border freelance work requires bilateral trust: buyers refuse to pay upfront for unverified deliverables, while freelancers cannot afford to risk uncompensated labor. StellarVault eliminates trusted intermediaries entirely by locking funds in smart contracts that release only under signature-checked or ZK-proven conditions.
+                <strong>Why Milestone Escrow?</strong> Cross-border freelance work requires bilateral trust: buyers refuse to pay upfront for unverified deliverables, while freelancers cannot afford to risk uncompensated labor. MidnightVault eliminates trusted intermediaries entirely by locking funds in smart contracts that release only under signature-checked or ZK-proven conditions.
               </div>
 
               <h4>Protocol Lifecycle Stages</h4>
@@ -199,7 +199,7 @@ export function DocsView() {
               <h4>Nullifier Mathematical Definition</h4>
               <div className="docs-code-block">
                 <code>
-                  Nullifier = PersistentHash([ "stellarvault:feedback:nullifier:", ParticipantSecret, SurveyTopic ])
+                  Nullifier = PersistentHash([ "midnightvault:nullifier:", ParticipantSecret, SurveyTopic ])
                 </code>
               </div>
             </article>
@@ -271,7 +271,7 @@ pub type EscrowRedeemer {
               <span className="badge badge-midnight">Developer Integration</span>
               <h3 className="docs-heading">REST API &amp; Off-Chain Client SDK</h3>
               <p>
-                StellarVault exposes clean REST endpoints and TypeScript utilities for seamless frontend and automation integrations:
+                MidnightVault exposes clean REST endpoints and TypeScript utilities for seamless frontend and automation integrations:
               </p>
 
               <div className="docs-endpoint-card">

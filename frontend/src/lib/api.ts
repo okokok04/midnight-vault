@@ -59,9 +59,9 @@ const DEFAULT_FEEDBACK: FeedbackRecord[] = [
 
 function getLocalEscrows(): EscrowRecord[] {
   try {
-    const raw = localStorage.getItem("stellarvault_escrows");
+    const raw = localStorage.getItem("midnightvault_escrows") || localStorage.getItem("stellarvault_escrows");
     if (!raw) {
-      localStorage.setItem("stellarvault_escrows", JSON.stringify(DEFAULT_ESCROWS));
+      localStorage.setItem("midnightvault_escrows", JSON.stringify(DEFAULT_ESCROWS));
       return DEFAULT_ESCROWS;
     }
     return JSON.parse(raw);
@@ -72,7 +72,7 @@ function getLocalEscrows(): EscrowRecord[] {
 
 function saveLocalEscrows(escrows: EscrowRecord[]): void {
   try {
-    localStorage.setItem("stellarvault_escrows", JSON.stringify(escrows));
+    localStorage.setItem("midnightvault_escrows", JSON.stringify(escrows));
   } catch {
     // Ignore storage quota
   }
@@ -80,9 +80,9 @@ function saveLocalEscrows(escrows: EscrowRecord[]): void {
 
 function getLocalFeedback(): FeedbackRecord[] {
   try {
-    const raw = localStorage.getItem("stellarvault_feedback");
+    const raw = localStorage.getItem("midnightvault_feedback") || localStorage.getItem("stellarvault_feedback");
     if (!raw) {
-      localStorage.setItem("stellarvault_feedback", JSON.stringify(DEFAULT_FEEDBACK));
+      localStorage.setItem("midnightvault_feedback", JSON.stringify(DEFAULT_FEEDBACK));
       return DEFAULT_FEEDBACK;
     }
     return JSON.parse(raw);
@@ -93,7 +93,7 @@ function getLocalFeedback(): FeedbackRecord[] {
 
 function saveLocalFeedback(feedback: FeedbackRecord[]): void {
   try {
-    localStorage.setItem("stellarvault_feedback", JSON.stringify(feedback));
+    localStorage.setItem("midnightvault_feedback", JSON.stringify(feedback));
   } catch {
     // Ignore storage quota
   }

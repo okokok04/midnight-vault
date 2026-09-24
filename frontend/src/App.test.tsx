@@ -41,7 +41,7 @@ describe("App", () => {
   it("renders Midnight ZK escrow panel by default and switches to Cardano tab", async () => {
     render(<App />);
 
-    expect(screen.getByText("StellarVault")).toBeInTheDocument();
+    expect(screen.getByText("MidnightVault")).toBeInTheDocument();
     expect(screen.getByText(/Midnight Privacy Escrow/i)).toBeInTheDocument();
     expect(screen.getByText("Midnight Compact Escrow State")).toBeInTheDocument();
 

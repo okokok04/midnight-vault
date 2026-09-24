@@ -1,4 +1,4 @@
-/// Minimal CIP-30 typings for the subset of the wallet API StellarVault
+/// Minimal CIP-30 typings for the subset of the wallet API MidnightVault
 /// actually uses. The full spec exposes more (collateral, data signing,
 /// balance in raw CBOR); we only need enough to connect a wallet and
 /// read its first used address.

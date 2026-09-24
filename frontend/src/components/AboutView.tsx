@@ -7,7 +7,7 @@ export function AboutView() {
       <div className="card" style={{ marginBottom: "1.5rem" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <span className="badge badge-midnight" style={{ marginBottom: "0.5rem" }}>About StellarVault Protocol</span>
+            <span className="badge badge-midnight" style={{ marginBottom: "0.5rem" }}>About MidnightVault Protocol</span>
             <h2 style={{ margin: 0, fontSize: "1.45rem", display: "flex", alignItems: "center", gap: "0.6rem" }}>
               <ShieldIcon width="22" height="22" />
               <span>Decentralized Trust for Global Remote Work</span>
@@ -30,7 +30,7 @@ export function AboutView() {
             Traditional freelance platforms charge 10–20% intermediary fees, retain arbitrary custody of funds, and leave users vulnerable to unilateral account freezes. Furthermore, public blockchain alternatives leak private financial transactions, client counterparties, and work history.
           </p>
           <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", lineHeight: 1.6, marginTop: "0.75rem" }}>
-            <strong>StellarVault solves this natively:</strong> funds are custodied solely by mathematically verified smart contracts, and reputation is established anonymously through Zero-Knowledge nullifiers without disclosing sensitive business relationships.
+            <strong>MidnightVault solves this natively:</strong> funds are custodied solely by mathematically verified smart contracts, and reputation is established anonymously through Zero-Knowledge nullifiers without disclosing sensitive business relationships.
           </p>
         </div>
 

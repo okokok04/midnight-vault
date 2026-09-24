@@ -49,7 +49,7 @@ export function FeedbackForm({
       <p className="empty-state" style={{ marginTop: "-0.5rem", marginBottom: "1rem" }}>
         Tried locking or settling an escrow? Tell us what was confusing,
         broken, or worked well — every submission gets triaged, see{" "}
-        <a href="https://github.com/okokok04/stellarvault/blob/main/docs/FEEDBACK.md">
+        <a href="https://github.com/okokok04/midnight-vault/blob/main/docs/FEEDBACK.md">
           docs/FEEDBACK.md
         </a>
         .

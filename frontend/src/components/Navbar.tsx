@@ -36,14 +36,14 @@ export function Navbar({ activeTab, setActiveTab, wallet }: Props) {
               onClick={() => setActiveTab("midnight")}
               style={{ cursor: "pointer" }}
             >
-              StellarVault
+              MidnightVault
             </h1>
             <span className="badge badge-midnight" style={{ fontSize: "0.68rem", padding: "0.15rem 0.5rem" }}>
-              v0.3 ZK-Beta
+              v1.0 ZK-Beta
             </span>
           </div>
           <p>
-            Trustless milestone escrow on Cardano &amp; Zero-Knowledge privacy protocol on Midnight Network.
+            Zero-Knowledge privacy escrow &amp; confidential survey protocol on Midnight Network.
           </p>
         </div>
       </div>
