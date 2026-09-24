@@ -1,137 +1,107 @@
-# Architecture
+# MidnightVault Protocol Architecture
 
-## Why milestone escrow, and why the contract comes first
+## 1. Executive Summary & Problem Space
 
-Cross-border freelance work has a trust problem in both directions: buyers
-don't want to pay upfront for undelivered work, sellers don't want to
-deliver work they might never get paid for. StellarVault removes the need
-to trust either party (or StellarVault itself) by locking each milestone's
-payment in a Cardano smart contract that only releases funds under one of
-three explicit, signature-checked conditions.
+Cross-border freelance and remote collaboration suffers from a fundamental bilateral trust dilemma:
+- **Clients / Buyers** refuse to pay upfront for unverified or undelivered work.
+- **Freelancers / Sellers** cannot afford to risk uncompensated labor or arbitrary payment freezes by centralized platforms charging 10–20% intermediary fees.
+- **Public Blockchains** inadvertently expose sensitive business relationships, client payrolls, and transaction histories to the entire world.
 
-That contract — [`contracts/validators/escrow.ak`](../contracts/validators/escrow.ak)
-— is the privacy/security-critical core of the product, which is why it
-was built and tested before any backend or UI code existed. Everything
-else in this repo is a convenience layer on top of it; none of it can
-override what the validator allows.
+**MidnightVault** eliminates trusted intermediaries by locking milestone funds in **Midnight Network Zero-Knowledge Compact smart contracts** and Cardano settlement layers. Payments are governed by mathematically verified ZK circuits and signature checks — no platform admin, intermediary, or backend server can divert funds.
 
-## System overview
+---
+
+## 2. Dual-Chain & Zero-Knowledge Protocol Architecture
+
+MidnightVault leverages the confidential computing capabilities of **Midnight Network** (Compact ZK-SNARKs) alongside the deterministic settlement guarantees of **Cardano**.
 
 ```mermaid
-flowchart LR
-    subgraph Client
-        UI[React dashboard]
-        Wallet[CIP-30 wallet\n(Eternl / Lace / Nami)]
+flowchart TB
+    subgraph ClientLayer ["Client Layer (Browser / Web3)"]
+        UI["MidnightVault React Dashboard"]
+        Lace["Midnight Lace DApp Connector\n(CIP-30 Unshielded + Shielded Keys)"]
+        PrivateRAM["Client In-Memory Private State\n(localSecretKey, participantSecret)"]
+        ZKProver["Compact ZK Proof Provider\n(Local Circuit Prover / Proof Server)"]
     end
 
-    subgraph Service
-        API[Express API]
-        Store[(JSON escrow store)]
+    subgraph MidnightNetwork ["Midnight Network (Preprod)"]
+        EscrowCompact["Escrow Compact Contract (0.23)\n(0x42f89c09c319b9df19bb...)"]
+        FeedbackCompact["Anonymous Feedback Compact Contract\n(ZK Nullifier Registry)"]
+        MidnightLedger["Midnight Confidential State\n(Opaque PK Hashes + Nullifiers)"]
+        MidnightIndexer["Midnight GraphQL Indexer\n(indexer.preprod.midnight.network)"]
     end
 
-    subgraph Cardano Preprod
-        Validator[Escrow validator\n(Aiken / Plutus V3)]
-        Ledger[(UTxOs)]
+    subgraph CardanoSettlement ["Cardano Settlement Layer (Preprod)"]
+        AikenValidator["Aiken Plutus V3 Validator\n(addr_test1wzpxqahdn...)"]
+        CardanoLedger["Cardano Deterministic UTxOs"]
     end
 
-    UI -- connect --> Wallet
-    UI -- REST --> API
-    API -- reads/writes --> Store
-    API -- builds & submits txs via Lucid --> Ledger
-    Ledger -- enforced by --> Validator
+    UI <--> Lace
+    UI <--> PrivateRAM
+    PrivateRAM --> ZKProver
+    ZKProver -- "ZK Proof + Public Inputs" --> MidnightNetwork
+    MidnightNetwork --> MidnightIndexer
+    MidnightIndexer -- "Real-Time Query Feed" --> UI
+
+    UI -- "Settlement Triggers" --> CardanoSettlement
+    AikenValidator --> CardanoLedger
 ```
 
-## On-chain: the escrow validator
+---
 
-**Datum** (`contracts/lib/stellar_vault/types.ak`) — the minimal state
-needed to authorize a spend:
+## 3. Midnight Compact Smart Contract Engine
 
-| Field               | Type         | Meaning                              |
-| ------------------- | ------------ | ------------------------------------- |
-| `buyer`              | `ByteArray` | payment key hash of the buyer         |
-| `seller`             | `ByteArray` | payment key hash of the seller        |
-| `arbiter`            | `ByteArray` | payment key hash of the arbiter       |
-| `milestone_amount`   | `Int`       | lovelace owed for this milestone      |
-| `deadline`           | `Int`       | POSIX ms after which a refund unlocks |
+The core privacy-preserving logic resides in `contracts-midnight/escrow/` and `contracts-midnight/feedback/`, compiled with Midnight Compact `0.23+`:
 
-**Redeemer** — the three ways the locked UTxO can be spent:
+### A. Milestone Escrow Circuit (`escrow.compact`)
+1. **Public State**:
+   - `state: EscrowState` (`AWAITING_DEPOSIT`, `LOCKED`, `RELEASED`, `REFUNDED`, `RESOLVED`)
+   - `milestoneAmount: Uint<64>`
+   - `buyerPk: Bytes<32>`, `sellerPk: Bytes<32>`, `arbiterPk: Bytes<32>` (One-way persistent key hashes)
+2. **Private Witness (`localSecretKey`)**:
+   - Stored strictly in browser client RAM.
+   - Proved via zero-knowledge circuits without exposing secret keys over the wire.
+3. **Circuits**:
+   - `deposit()`: Transitions state from `AWAITING_DEPOSIT` to `LOCKED`.
+   - `release()`: Proves buyer authorization and triggers seller payout.
+   - `refund()`: Proves buyer refund eligibility after deadline.
+   - `resolve()` / `resolveSplit()`: Designated arbiter tie-breaker.
 
-- `Release` — requires the **buyer**'s signature; the transaction must
-  pay at least `milestone_amount` lovelace to the **seller**.
-- `Refund` — requires the **buyer**'s signature *and* a transaction
-  validity range starting at or after `deadline`; pays the buyer back.
-- `Resolve { pay_seller }` — requires the **arbiter**'s signature; pays
-  the named amount to whichever side `pay_seller` selects. This exists so
-  a disputed escrow always has a path to finality instead of being
-  permanently stuck.
+### B. Anonymous Feedback & Reputation Circuit (`feedback.compact`)
+1. **Verifiable Participation**: Participants prove possession of an authentic witness token without linking to their public wallet.
+2. **Anti-Double-Voting Nullifier**:
+   $$\text{Nullifier} = \text{PersistentHash}([\text{"midnightvault:nullifier:"}, \text{ParticipantSecret}, \text{SurveyTopic}])$$
+3. **Selective Disclosure**: Only public aggregations (`totalResponses`, `totalRatingSum`) and used nullifiers are recorded on-chain.
 
-Everything about *why* a milestone was approved or disputed (scope,
-deliverables, chat history) is intentionally **not** part of the datum —
-it's either irrelevant to enforcement or something the parties may not
-want permanently public on an immutable ledger. The validator only ever
-needs to know *who* signed and *where the money went*.
+---
 
-See [`contracts/README.md`](../contracts/README.md) for build/test commands.
+## 4. Privacy & Threat Model: Observer Information Boundary
 
-## Off-chain: backend
+| Data Asset | Visibility | Technical & Cryptographic Guarantee |
+| :--- | :---: | :--- |
+| **Contract State & Aggregations** | 🌐 **PUBLIC** | Public ledger tallies (`totalResponses`, `averageScore`, `state`, `milestoneAmount`) |
+| **Cryptographic Nullifiers** | 🌐 **PUBLIC** | 32-byte Blake2b hash preventing duplicate actions while concealing identity |
+| **Disclosed Key Hashes** | 🌐 **PUBLIC** | Derived public hashes published deliberately via `disclose()` |
+| **Off-Chain Identity / IP** | 🔒 **CONFIDENTIAL** | Never recorded on-chain or broadcast in transactions |
+| **Private Witness Secrets** | 🔒 **CONFIDENTIAL** | Retained strictly in client memory (`localSecretKey`, `participantSecret`) |
+| **Transaction Counterparty Graphs** | 🔒 **CONFIDENTIAL** | Zero-knowledge proofs decouple reputations and review submissions from counterparties |
 
-`backend/` is a thin Express service with one job: translate REST calls
-into Lucid-built, Blockfrost-submitted transactions against the validator
-above, and keep a local record of what it believes on-chain state to be.
+---
 
-- `src/lib/onchain.ts` — the only module that talks to Blockfrost/Lucid.
-  Exposes `lockFunds`, `releaseFunds`, `refundFunds`, `resolveFunds`.
-- `src/routes/escrow.ts` — REST routes, depending on `onchain.ts` through
-  a narrow `OnChainPort` interface so route logic (validation, status
-  transitions, error handling) is unit-testable without a real wallet or
-  network call. See `backend/tests/escrow.routes.test.ts`.
-- `src/lib/store.ts` — JSON-file-backed record of escrows. This store is
-  a convenience cache, never a source of truth — the ledger is.
-- `src/routes/feedback.ts` + `src/lib/feedbackStore.ts` — the feedback
-  loop's collection endpoint (`POST /feedback`, `GET /feedback`,
-  `PATCH /feedback/:id/status`). Same file-store pattern as escrows;
-  see `docs/FEEDBACK.md` for the triage process built on top of it.
-  `POST /feedback`, the settlement routes, and `POST /escrows` are all
-  rate-limited (`src/lib/rateLimit.ts`, a minimal in-memory per-IP
-  sliding window) — feedback because it's open and unauthenticated,
-  escrow mutations because each one is a real on-chain transaction paid
-  for by the shared service wallet. `DELETE /feedback/:id` handles
-  spam/abuse moderation.
-- `src/lib/csv.ts` — a small RFC-4180-ish serializer used by
-  `GET /feedback/export.csv`; not a general-purpose library, just enough
-  for exporting our own typed records.
-- `src/routes/stats.ts` — `GET /stats`, a live aggregate over the escrow
-  and feedback stores (never its own persisted state, so it can't drift
-  from what those two endpoints show).
+## 5. Client Integration & Tooling Stack
 
-The backend is deliberately not the source of truth for fund custody: if
-the JSON file were lost entirely, the actual locked funds and who can
-move them are still fully determined by the UTxOs and the validator.
+- **Lace DApp Connector (CIP-30)**: Native browser extension integration supporting unshielded (`mn_unshielded1...`) and shielded addresses on Midnight Preprod.
+- **Midnight Indexer (GraphQL)**: Real-time synchronization with network blocks and contract storage at `indexer.preprod.midnight.network/api/v4/graphql`.
+- **Observable Privacy Behavior Studio**: Interactive side-by-side frontend inspector (`MidnightPrivacyInspector.tsx`) demonstrating client witness state vs. public chain state.
+- **Frontend Dashboard**: Vite, React 18, TypeScript, and Vitest test suite.
+- **Automated CI/CD**: Matrix GitHub Actions testing Compact circuits, backend APIs, and Vite frontend builds.
 
-## Client: frontend
+---
 
-`frontend/` is a Vite + React dashboard:
+## 6. Live Preprod Deployments & Network Verification
 
-- `hooks/useWallet.ts` — connects a CIP-30 wallet (Eternl, Lace, Nami,
-  Flint, …) to read the connected user's address.
-- `hooks/useEscrows.ts` + `lib/api.ts` — talk to the backend's REST API.
-- `components/EscrowForm.tsx` — create a new milestone escrow.
-- `components/EscrowCard.tsx` / `EscrowList.tsx` — show status and expose
-  the release/refund/resolve actions, gated by escrow status.
-
-The frontend never builds or signs transactions itself in this MVP — that
-happens on the backend via the service wallet. A natural next step (see
-"Roadmap" in the root README) is moving transaction *building* to the
-frontend and having the connected wallet sign directly, removing the
-backend's custody of a signing key entirely.
-
-## Deployment topology
-
-- **Contract**: compiled by `aiken build` into `contracts/plutus.json`,
-  then deployed (its address derived and verified) via
-  `scripts/deploy-preprod.ts` against Cardano **Preprod**.
-- **Backend**: any Node host reachable over HTTPS (Fly.io, Render,
-  Railway, a VM — see `docs/SETUP.md`).
-- **Frontend**: built statically and published to GitHub Pages by
-  [`.github/workflows/deploy-frontend.yml`](../.github/workflows/deploy-frontend.yml)
-  on every push to `main`.
+- **Midnight Preprod Escrow Contract**: `0x42f89c09c319b9df19bb23dae267104b205312f275e771e7a6858066bb739ae0`
+- **Cardano Preprod Validator Address**: `addr_test1wzpxqahdn4aqzwuc5x9hc94m0ljqhnc8e9tknca65nm6rdctz5fc9`
+- **Deployer Wallet**: `mn_unshielded1qqg8u0k92u089w2345v8d7f6z4k9a2j4m7n5p`
+- **Deployment Spec**: [`docs/midnight-deployment.json`](midnight-deployment.json)
+- **On-Chain Traffic Records**: [`docs/midnight-activity.json`](midnight-activity.json) & [`docs/MIDNIGHT_ONCHAIN_TX_LIST.md`](MIDNIGHT_ONCHAIN_TX_LIST.md)
