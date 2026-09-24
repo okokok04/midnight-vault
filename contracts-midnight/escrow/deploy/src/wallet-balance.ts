@@ -5,18 +5,18 @@ import { filter } from 'rxjs/operators';
 
 async function main() {
   const env = mnEnv();
-  console.log(`[StellarVault - Midnight] Checking wallet balance for network: ${env}`);
+  console.log(`[MidnightVault - Midnight] Checking wallet balance for network: ${env}`);
 
   const wallet = await openWallet();
   console.log('Connecting and syncing wallet with indexer...');
 
-  const state = await firstValueFrom(
-    wallet.state().pipe(filter((s) => s !== undefined))
+  const state: any = await firstValueFrom(
+    wallet.state().pipe(filter((s: any) => s !== undefined))
   );
 
   console.log('\n--- Wallet State ---');
-  console.log(`Address: ${state.address}`);
-  console.log(`Unshielded Balances:`, state.balances);
+  console.log(`Address: ${state?.address}`);
+  console.log(`Unshielded Balances:`, state?.balances);
   console.log(`Sync status: Synced`);
   console.log(`Faucet URL: ${FAUCET_URL[env]}`);
   console.log('--------------------\n');

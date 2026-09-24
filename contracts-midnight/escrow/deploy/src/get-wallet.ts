@@ -1,8 +1,7 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { WalletBuilder } from '@midnight-ntwrk/wallet';
-import type { Resource, Wallet } from '@midnight-ntwrk/wallet';
 import { generateRandomSeed } from '@midnight-ntwrk/wallet-sdk-hd';
 import { NetworkId as ZswapNetworkId } from '@midnight-ntwrk/zswap';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
@@ -20,7 +19,7 @@ export function loadOrCreateSeed(): string {
   return seedHex;
 }
 
-export async function openWallet(): Promise<Wallet & Resource> {
+export async function openWallet(): Promise<any> {
   const env = mnEnv();
   const endpoints = ENDPOINTS[env];
   const seed = loadOrCreateSeed();

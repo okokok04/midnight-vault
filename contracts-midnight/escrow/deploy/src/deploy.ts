@@ -1,6 +1,6 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { writeFileSync } from 'node:fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { writeFileSync } from 'fs';
 import { mnEnv, ENDPOINTS, proofServerUri } from './network.js';
 import { openWallet } from './get-wallet.js';
 import { firstValueFrom } from 'rxjs';
@@ -10,7 +10,7 @@ import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-p
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
-import { Contract, ledger } from '../../contract/managed/escrow/contract/index.js';
+import { Contract } from '../../contract/managed/escrow/contract/index.js';
 import { witnesses, createEscrowPrivateState } from '../../contract/src/witnesses.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -22,7 +22,7 @@ async function main() {
   const dryRun = process.argv.includes('--dry-run');
 
   console.log(`====================================================`);
-  console.log(` StellarVault Escrow — Midnight Contract Deployment `);
+  console.log(` MidnightVault Escrow — Midnight Contract Deployment `);
   console.log(`====================================================`);
   console.log(`Target Network: ${env}`);
   console.log(`Indexer: ${ENDPOINTS[env].indexer}`);
@@ -32,24 +32,24 @@ async function main() {
   const wallet = await openWallet();
   console.log('\n[1/4] Synchronizing wallet state...');
 
-  const state = await firstValueFrom(
-    wallet.state().pipe(filter((s) => s !== undefined))
+  const state: any = await firstValueFrom(
+    wallet.state().pipe(filter((s: any) => s !== undefined))
   );
 
-  console.log(`Deployer Address: ${state.address}`);
-  console.log(`Unshielded Balance:`, state.balances);
+  console.log(`Deployer Address: ${state?.address}`);
+  console.log(`Unshielded Balance:`, state?.balances);
 
   const zkConfigProvider = new NodeZkConfigProvider<string>(MANAGED_PATH);
-  const proofProvider = httpClientProofProvider(proofServerUri());
+  const proofProvider = (httpClientProofProvider as any)(proofServerUri());
   const publicDataProvider = indexerPublicDataProvider(
     ENDPOINTS[env].indexer,
     ENDPOINTS[env].indexerWs
   );
   const privateStateProvider = levelPrivateStateProvider({
-    privateStateStoreName: `.stellarvault-midnight-deploy-${env}`,
-  });
+    privateStateStoreName: `.midnightvault-midnight-deploy-${env}`,
+  } as any);
 
-  const providers = {
+  const providers: any = {
     walletProvider: wallet,
     zkConfigProvider,
     proofProvider,
@@ -95,7 +95,7 @@ async function main() {
     const receipt = {
       network: env,
       contractAddress: deployedContractAddress,
-      deployerAddress: state.address,
+      deployerAddress: state?.address,
       txHash,
       blockHeight,
       deployedAt: new Date().toISOString(),
